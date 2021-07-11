@@ -8,4 +8,3 @@ protocol Tree {
     // O(n), where n is the number of nodes in the tree.
     func breadth() -> Int
 }
-
