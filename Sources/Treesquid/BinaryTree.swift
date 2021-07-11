@@ -1,10 +1,3 @@
-//
-//  BinaryTree.swift
-//  
-//
-//  Created by Joachim Baran on 2021-07-10.
-//
-
 import Foundation
 
 class BinaryTreeNode<T> {
