@@ -1,3 +1,3 @@
 # Treesquid
 
-A description of this package.
+Tree data structures and algorithms for Swift.
