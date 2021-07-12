@@ -1,10 +1,3 @@
-//
-//  BinaryTreeTests.swift
-//  
-//
-//  Created by Joachim Baran on 2021-07-10.
-//
-
 import Foundation
 import XCTest
 @testable import Treesquid

@@ -1,4 +1,3 @@
-
 import Foundation
 
 class GenericTree<T>: Tree {
