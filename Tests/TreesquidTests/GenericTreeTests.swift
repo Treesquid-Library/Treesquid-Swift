@@ -29,25 +29,24 @@ final class GenericTreeTests: XCTestCase {
                   "Empty generic tree's depth is not zero'.")
     }
     
-    func testTreeTwoLevelsDepth() {
+    func testTreeSixLevelsDepth() {
         XCTAssert(GenericTreeTests.treeSixLevels.depth() == 6,
                   "Generic tree with six levels has incorrect depth.")
     }
     
-    func testTreeTwoLevelsBreadth() {
+    func testTreeSixLevelsBreadth() {
         XCTAssert(GenericTreeTests.treeSixLevels.breadth() == 1,
                   "Generic tree with six levels has incorrect breadth.")
     }
     
-    /*
-    func testFullTreeTwoLevelsLevels() {
-        let levels = GenericTreeTests.treeTwoLevels.levels()
-        XCTAssert(levels.count == 3,
-                  "Full tree of three levels reports wrong number of levels.")
+    func testTreeSixLevelsLevels() {
+        let depth = GenericTreeTests.treeSixLevels.depth()
+        let levels = GenericTreeTests.treeSixLevels.levels()
+        XCTAssert(levels.count == depth,
+                  "Tree of six levels reports wrong number of levels.")
         for level in 0..<levels.count {
-            XCTAssert(levels[level].count == Int(pow(2.0, Double(level))),
-                      "Full tree of three levels' level has an incorrect number of nodes.")
+            XCTAssert(levels[level].count == 1,
+                      "Tree of six levels' level has an incorrect number of nodes.")
         }
     }
-     */
 }
