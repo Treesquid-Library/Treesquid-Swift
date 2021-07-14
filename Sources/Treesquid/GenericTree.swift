@@ -25,18 +25,21 @@ class TreeNode<T> {
     }
     
     // O(n), but might be O(1) if no space reallocation is necessary.
-    func append(_ child: TreeNode<T>) throws {
+    func append(_ child: TreeNode<T>) throws -> TreeNode<T> {
         children.append(child)
+        return self
     }
     
     // O(n)
-    func prepend(_ child: TreeNode<T>) throws {
+    func prepend(_ child: TreeNode<T>) throws -> TreeNode<T> {
         children.insert(child, at: 0)
+        return self
     }
     
     // O(n)
-    func insert(_ child: TreeNode<T>, at index: Int) throws {
+    func insert(_ child: TreeNode<T>, at index: Int) throws -> TreeNode<T> {
         children.insert(child, at: index)
+        return self
     }
 }
 
