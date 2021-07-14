@@ -4,13 +4,13 @@ import XCTest
 
 final class BinaryTreeTests: XCTestCase {
     static let treeFullThreeLevels = BinaryTree()
-        .append(node: BinaryTreeNode(value: "root"))
-        .append(node: BinaryTreeNode(value: "l1"))
-        .append(node: BinaryTreeNode(value: "r1"))
-        .append(node: BinaryTreeNode(value: "ll2"))
-        .append(node: BinaryTreeNode(value: "lr2"))
-        .append(node: BinaryTreeNode(value: "rl2"))
-        .append(node: BinaryTreeNode(value: "rr2"))
+        .append(node: BinaryTreeNode(value: "root1"))
+        .append(node: BinaryTreeNode(value: "l2"))
+        .append(node: BinaryTreeNode(value: "r2"))
+        .append(node: BinaryTreeNode(value: "ll3"))
+        .append(node: BinaryTreeNode(value: "lr3"))
+        .append(node: BinaryTreeNode(value: "rl4"))
+        .append(node: BinaryTreeNode(value: "rr4"))
     
     func testEmptyTreeIsEmpty() {
         let emptyTree = BinaryTree<Any>()

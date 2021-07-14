@@ -1,5 +1,45 @@
 import Foundation
 
+enum TreeNodeOperationError: Error {
+    case indexOutOfBounds
+    case childCapacityExceeded
+}
+
+class TreeNode<T> {
+    private(set) var parent: TreeNode<T>?
+    lazy var children: [TreeNode<T>?] = []
+    private(set) var value: T?
+    
+    init(value: T?) {
+        self.value = value
+    }
+    
+    // O(1)
+    subscript(index: Int) -> TreeNode<T>? {
+        get {
+            children[index]
+        }
+        set(newChild) {
+            children[index] = newChild
+        }
+    }
+    
+    // O(n), but might be O(1) if no space reallocation is necessary.
+    func append(_ child: TreeNode<T>) throws {
+        children.append(child)
+    }
+    
+    // O(n)
+    func prepend(_ child: TreeNode<T>) throws {
+        children.insert(child, at: 0)
+    }
+    
+    // O(n)
+    func insert(_ child: TreeNode<T>, at index: Int) throws {
+        children.insert(child, at: index)
+    }
+}
+
 class GenericTree<T>: Tree {
     var root: TreeNode<T>?
     
@@ -53,7 +93,7 @@ class GenericTree<T>: Tree {
         var nextLevel: [TreeNode<T>] = []
         for node in level {
             if node.children.count == 0 {
-                node.append(newNode)
+                try! node.append(newNode)
                 return self
             }
             for childIndex in 0..<node.children.count {
