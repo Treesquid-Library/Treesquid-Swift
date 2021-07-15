@@ -73,12 +73,12 @@ class GenericTree<T>: Tree {
     // Tree access
     //
     
-    @discardableResult func append(node: TreeNode<T>) -> GenericTree {
+    @discardableResult func insert(node: TreeNode<T>) -> GenericTree {
         if root == nil {
             root = node
             return self
         }
-        return append(node, depth: 1, level: [root!])
+        return insert(node, depth: 1, level: [root!])
     }
     
     func levels() -> [[TreeNode<T>]] {
@@ -92,7 +92,7 @@ class GenericTree<T>: Tree {
     // Private functions
     //
     
-    private func append(_ newNode: TreeNode<T>, depth: Int, level: [TreeNode<T>]) -> GenericTree<T> {
+    private func insert(_ newNode: TreeNode<T>, depth: Int, level: [TreeNode<T>]) -> GenericTree<T> {
         var nextLevel: [TreeNode<T>] = []
         for node in level {
             if node.children.count == 0 {
@@ -107,7 +107,7 @@ class GenericTree<T>: Tree {
                 nextLevel.append(node[childIndex]!)
             }
         }
-        return append(newNode, depth: depth + 1, level: nextLevel)
+        return insert(newNode, depth: depth + 1, level: nextLevel)
     }
     
     private func depth(_ node: TreeNode<T>?) -> Int {

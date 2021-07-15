@@ -51,11 +51,11 @@ class BinaryTreeNode<T>: TreeNode<T> {
 }
 
 class BinaryTree<T>: GenericTree<T> {
-    @discardableResult override func append(node: TreeNode<T>) -> BinaryTree<T> {
+    @discardableResult override func insert(node: TreeNode<T>) -> BinaryTree<T> {
         if node is BinaryTreeNode {
-            return super.append(node: node) as! BinaryTree<T>
+            return super.insert(node: node) as! BinaryTree<T>
         } else {
-            return super.append(node: BinaryTreeNode(value: node.value)) as! BinaryTree<T>
+            return super.insert(node: BinaryTreeNode(value: node.value)) as! BinaryTree<T>
         }
     }
 }

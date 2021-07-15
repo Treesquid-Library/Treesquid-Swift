@@ -4,12 +4,12 @@ import XCTest
 
 final class GenericTreeTests: XCTestCase {
     static let treeSixLevels = GenericTree()
-        .append(node: TreeNode(value: "root1"))
-        .append(node: TreeNode(value: "(0)2"))
-        .append(node: TreeNode(value: "(0)(0)3"))
-        .append(node: TreeNode(value: "(0)(0)(0)4"))
-        .append(node: TreeNode(value: "(0)(0)(0)(0)5"))
-        .append(node: TreeNode(value: "(0)(0)(0)(0)(0)6"))
+        .insert(node: TreeNode(value: "root1"))
+        .insert(node: TreeNode(value: "(0)2"))
+        .insert(node: TreeNode(value: "(0)(0)3"))
+        .insert(node: TreeNode(value: "(0)(0)(0)4"))
+        .insert(node: TreeNode(value: "(0)(0)(0)(0)5"))
+        .insert(node: TreeNode(value: "(0)(0)(0)(0)(0)6"))
     
     func testEmptyTreeIsEmpty() {
         let emptyTree = GenericTree<Any>()
