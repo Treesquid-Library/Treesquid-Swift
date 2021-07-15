@@ -1,13 +1,13 @@
 import Foundation
 
-enum TreeNodeOperationError: Error {
+enum NodeOperationError: Error {
     case indexOutOfBounds
     case childCapacityExceeded
 }
 
-class TreeNode<T> {
-    private(set) var parent: TreeNode<T>?
-    lazy var children: [TreeNode<T>?] = []
+class Node<T> {
+    private(set) var parent: Node<T>?
+    lazy var children: [Node<T>?] = []
     private(set) var value: T?
     
     init(value: T?) {
@@ -15,7 +15,7 @@ class TreeNode<T> {
     }
     
     // O(1)
-    subscript(index: Int) -> TreeNode<T>? {
+    subscript(index: Int) -> Node<T>? {
         get {
             children[index]
         }
@@ -25,26 +25,26 @@ class TreeNode<T> {
     }
     
     // O(n), but might be O(1) if no space reallocation is necessary.
-    @discardableResult func append(_ child: TreeNode<T>) throws -> TreeNode<T> {
+    @discardableResult func append(_ child: Node<T>) throws -> Node<T> {
         children.append(child)
         return self
     }
     
     // O(n)
-    @discardableResult func prepend(_ child: TreeNode<T>) throws -> TreeNode<T> {
+    @discardableResult func prepend(_ child: Node<T>) throws -> Node<T> {
         children.insert(child, at: 0)
         return self
     }
     
     // O(n)
-    @discardableResult func insert(_ child: TreeNode<T>, at index: Int) throws -> TreeNode<T> {
+    @discardableResult func insert(_ child: Node<T>, at index: Int) throws -> Node<T> {
         children.insert(child, at: index)
         return self
     }
 }
 
-class GenericTree<T>: Tree {
-    var root: TreeNode<T>?
+class GeneralTree<T>: Tree {
+    var root: Node<T>?
     
     //
     // Boolean tree-properties
@@ -73,7 +73,7 @@ class GenericTree<T>: Tree {
     // Tree access
     //
     
-    @discardableResult func insert(node: TreeNode<T>) -> GenericTree {
+    @discardableResult func insert(node: Node<T>) -> GeneralTree {
         if root == nil {
             root = node
             return self
@@ -81,9 +81,9 @@ class GenericTree<T>: Tree {
         return insert(node, depth: 1, level: [root!])
     }
     
-    func levels() -> [[TreeNode<T>]] {
+    func levels() -> [[Node<T>]] {
         guard let root = root else { return [] }
-        var levelStack: [[TreeNode<T>]] = [[root]]
+        var levelStack: [[Node<T>]] = [[root]]
         levels(levelStack: &levelStack)
         return levelStack
     }
@@ -92,8 +92,8 @@ class GenericTree<T>: Tree {
     // Private functions
     //
     
-    private func insert(_ newNode: TreeNode<T>, depth: Int, level: [TreeNode<T>]) -> GenericTree<T> {
-        var nextLevel: [TreeNode<T>] = []
+    private func insert(_ newNode: Node<T>, depth: Int, level: [Node<T>]) -> GeneralTree<T> {
+        var nextLevel: [Node<T>] = []
         for node in level {
             if node.children.count == 0 {
                 try! node.append(newNode)
@@ -110,7 +110,7 @@ class GenericTree<T>: Tree {
         return insert(newNode, depth: depth + 1, level: nextLevel)
     }
     
-    private func depth(_ node: TreeNode<T>?) -> Int {
+    private func depth(_ node: Node<T>?) -> Int {
         guard let node = node else { return 0 }
         return node.children
             .filter { $0 != nil }
@@ -118,9 +118,9 @@ class GenericTree<T>: Tree {
             + 1
     }
     
-    private func levels(levelStack: inout [[TreeNode<T>]]) {
+    private func levels(levelStack: inout [[Node<T>]]) {
         guard let deepestLevel = levelStack.last else { return }
-        var nextLevel: [TreeNode<T>] = []
+        var nextLevel: [Node<T>] = []
         for node in deepestLevel {
             for child in node.children {
                 if child != nil { nextLevel.append(child!) }
