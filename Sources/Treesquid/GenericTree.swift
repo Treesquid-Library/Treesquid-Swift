@@ -25,19 +25,19 @@ class TreeNode<T> {
     }
     
     // O(n), but might be O(1) if no space reallocation is necessary.
-    func append(_ child: TreeNode<T>) throws -> TreeNode<T> {
+    @discardableResult func append(_ child: TreeNode<T>) throws -> TreeNode<T> {
         children.append(child)
         return self
     }
     
     // O(n)
-    func prepend(_ child: TreeNode<T>) throws -> TreeNode<T> {
+    @discardableResult func prepend(_ child: TreeNode<T>) throws -> TreeNode<T> {
         children.insert(child, at: 0)
         return self
     }
     
     // O(n)
-    func insert(_ child: TreeNode<T>, at index: Int) throws -> TreeNode<T> {
+    @discardableResult func insert(_ child: TreeNode<T>, at index: Int) throws -> TreeNode<T> {
         children.insert(child, at: index)
         return self
     }
@@ -73,7 +73,7 @@ class GenericTree<T>: Tree {
     // Tree access
     //
     
-    func append(node: TreeNode<T>) -> GenericTree {
+    @discardableResult func append(node: TreeNode<T>) -> GenericTree {
         if root == nil {
             root = node
             return self

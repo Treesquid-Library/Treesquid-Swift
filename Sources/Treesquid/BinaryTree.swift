@@ -11,7 +11,7 @@ class BinaryTreeNode<T>: TreeNode<T> {
     }
     
     // O(1)
-    override func append(_ child: TreeNode<T>) throws -> TreeNode<T> {
+    @discardableResult override func append(_ child: TreeNode<T>) throws -> TreeNode<T> {
         for childIndex in 0..<children.count {
             if children[childIndex] == nil {
                 children[childIndex] = child
@@ -22,7 +22,7 @@ class BinaryTreeNode<T>: TreeNode<T> {
     }
     
     // O(1)
-    override func prepend(_ child: TreeNode<T>) throws -> TreeNode<T> {
+    @discardableResult override func prepend(_ child: TreeNode<T>) throws -> TreeNode<T> {
         if children[Child.left.rawValue] == nil {
             children[Child.left.rawValue] = child
             return self
@@ -35,7 +35,7 @@ class BinaryTreeNode<T>: TreeNode<T> {
     }
     
     // O(1)
-    override func insert(_ child: TreeNode<T>, at index: Int) throws -> TreeNode<T> {
+    @discardableResult override func insert(_ child: TreeNode<T>, at index: Int) throws -> TreeNode<T> {
         if index < 0 || index >= 2 {
             throw TreeNodeOperationError.indexOutOfBounds
         }
@@ -51,7 +51,7 @@ class BinaryTreeNode<T>: TreeNode<T> {
 }
 
 class BinaryTree<T>: GenericTree<T> {
-    override func append(node: TreeNode<T>) -> BinaryTree<T> {
+    @discardableResult override func append(node: TreeNode<T>) -> BinaryTree<T> {
         if node is BinaryTreeNode {
             return super.append(node: node) as! BinaryTree<T>
         } else {
