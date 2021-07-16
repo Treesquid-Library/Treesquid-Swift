@@ -67,6 +67,13 @@ class GeneralTree<T>: Treelike {
         return levelStack.map { $0.count }.max()!
     }
     
+    func count() -> Int {
+        guard let root = root else { return 0 }
+        var levelStack = [[root]]
+        levels(levelStack: &levelStack)
+        return levelStack.map { $0.count }.reduce(0, { x, y in x + y })
+    }
+    
     func depth() -> Int {
         return depth(root)
     }

@@ -24,11 +24,14 @@ protocol Treelike {
     func isEmpty() -> Bool
     
     // O(n), where n is the number of nodes in the tree.
-    func depth() -> Int
+    func breadth() -> Int
+
+    // O(n), where n is the number of nodes in the tree.
+    func count() -> Int
     
     // O(n), where n is the number of nodes in the tree.
-    func breadth() -> Int
-    
+    func depth() -> Int
+        
     // Implementation dependent.
     func insert(node: Node) -> Tree
 }
