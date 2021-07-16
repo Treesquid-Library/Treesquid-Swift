@@ -16,6 +16,22 @@ class GeneralNode<T>: TraversableNode, MutableNode {
         self.value = value
     }
     
+    //
+    // Node properties
+    //
+    
+    func arity() -> Int {
+        return children.count
+    }
+    
+    func count() -> Int {
+        return children.map { $0 != nil ? 1 : 0 }.reduce(0, { x, y in x + y })
+    }
+    
+    //
+    // Child access
+    //
+    
     // O(1)
     subscript(index: Int) -> Node? {
         get {
@@ -71,6 +87,7 @@ class GeneralTree<T>: Treelike {
         guard let root = root else { return 0 }
         var levelStack = [[root]]
         levels(levelStack: &levelStack)
+        // NOTE: This duplicates the space requirement.
         return levelStack.map { $0.count }.reduce(0, { x, y in x + y })
     }
     

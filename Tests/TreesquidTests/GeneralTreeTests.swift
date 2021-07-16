@@ -15,6 +15,10 @@ final class GeneralTreeTests: XCTestCase {
                     .append(GeneralNode(value: 1))
                     .append(GeneralNode(value: 2))
                     .append(GeneralNode(value: 3)))
+    static let nodeArity3Count3 =  try! GeneralNode<String>(value: "root")
+        .append(GeneralNode(value: "1"))
+        .append(GeneralNode(value: "2"))
+        .append(GeneralNode(value: "3"))
     
     func testEmptyTreeIsEmpty() {
         let emptyTree = GeneralTree<Any>()
@@ -80,4 +84,22 @@ final class GeneralTreeTests: XCTestCase {
                   "Tree of two levels' level has an incorrect number of nodes.")
     }
 
+    func testNodeArityAndCountMatch() {
+        XCTAssert(GeneralTreeTests.nodeArity3Count3.arity() == 3,
+                  "Root node is not of arity three.")
+        XCTAssert(GeneralTreeTests.nodeArity3Count3.count() == 3,
+                  "Root node has not a count of three.")
+    }
+    
+    func testNodeArity2ount1() {
+        let nodeArity2Count1 =  try! GeneralNode<String>(value: "root")
+            .append(GeneralNode(value: "1"))
+            .append(GeneralNode(value: "2"))
+        nodeArity2Count1[0] = nil
+        
+        XCTAssert(nodeArity2Count1.arity() == 2,
+                  "Root node is not of arity two.")
+        XCTAssert(nodeArity2Count1.count() == 1,
+                  "Root node has not a count of 1.")
+    }
 }
