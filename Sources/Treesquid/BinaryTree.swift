@@ -1,6 +1,6 @@
 import Foundation
 
-class BinaryTreeNode<T>: Node<T> {
+class BinaryTreeNode<T>: GeneralNode<T> {
     enum Child: Int {
         case left = 0, right
     }
@@ -11,7 +11,7 @@ class BinaryTreeNode<T>: Node<T> {
     }
     
     // O(1)
-    @discardableResult override func append(_ child: Node<T>) throws -> Node<T> {
+    @discardableResult override func append(_ child: GeneralNode<T>) throws -> GeneralNode<T> {
         for childIndex in 0..<children.count {
             if children[childIndex] == nil {
                 children[childIndex] = child
@@ -22,7 +22,7 @@ class BinaryTreeNode<T>: Node<T> {
     }
     
     // O(1)
-    @discardableResult override func prepend(_ child: Node<T>) throws -> Node<T> {
+    @discardableResult override func prepend(_ child: GeneralNode<T>) throws -> GeneralNode<T> {
         if children[Child.left.rawValue] == nil {
             children[Child.left.rawValue] = child
             return self
@@ -35,7 +35,7 @@ class BinaryTreeNode<T>: Node<T> {
     }
     
     // O(1)
-    @discardableResult override func insert(_ child: Node<T>, at index: Int) throws -> Node<T> {
+    @discardableResult override func insert(_ child: GeneralNode<T>, at index: Int) throws -> GeneralNode<T> {
         if index < 0 || index >= 2 {
             throw NodeOperationError.indexOutOfBounds
         }
@@ -51,7 +51,7 @@ class BinaryTreeNode<T>: Node<T> {
 }
 
 class BinaryTree<T>: GeneralTree<T> {
-    @discardableResult override func insert(node: Node<T>) -> BinaryTree<T> {
+    @discardableResult override func insert(node: GeneralNode<T>) -> BinaryTree<T> {
         if node is BinaryTreeNode {
             return super.insert(node: node) as! BinaryTree<T>
         } else {
