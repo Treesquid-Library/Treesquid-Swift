@@ -5,14 +5,22 @@ enum NodeOperationError: Error {
     case childCapacityExceeded
 }
 
-class GeneralNode<T>: TraversableNode, MutableNode {
-    typealias Node = GeneralNode<T>
+class GeneralTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
+    typealias Node = GeneralTreeNode<Key, Value>
+    typealias Key = Key
+    typealias Value = Value
     
-    private(set) var parent: GeneralNode<T>?
-    lazy var children: [GeneralNode<T>?] = []
-    private(set) var value: T?
+    private(set) var parent: Node?
+    lazy var children: [Node] = []
+    private(set) var key: Key?
+    private(set) var value: Value?
     
-    init(value: T?) {
+    convenience init(key: Key?) {
+        self.init(key: key, value: nil)
+    }
+    
+    init(key: Key?, value: Value?) {
+        self.key = key
         self.value = value
     }
     
@@ -21,11 +29,11 @@ class GeneralNode<T>: TraversableNode, MutableNode {
     //
     
     func arity() -> Int {
-        return children.count
+        Treesquid.arity(of: self)
     }
     
     func count() -> Int {
-        return children.map { $0 != nil ? 1 : 0 }.reduce(0, { x, y in x + y })
+        Treesquid.count(of: self)
     }
     
     //
@@ -38,31 +46,68 @@ class GeneralNode<T>: TraversableNode, MutableNode {
             children[index]
         }
         set(newChild) {
+            guard let newChild = newChild else {
+                children.remove(at: index)
+                return
+            }
             children[index] = newChild
         }
     }
     
     // O(n), but might be O(1) if no space reallocation is necessary.
-    @discardableResult func append(_ child: GeneralNode<T>) throws -> GeneralNode<T> {
+    @discardableResult
+    func append(_ child: Node) throws -> Node {
         children.append(child)
         return self
     }
     
     // O(n)
-    @discardableResult func prepend(_ child: GeneralNode<T>) throws -> GeneralNode<T> {
+    @discardableResult
+    func prepend(_ child: Node) throws -> Node {
         children.insert(child, at: 0)
         return self
     }
     
     // O(n)
-    @discardableResult func insert(_ child: GeneralNode<T>, at index: Int) throws -> GeneralNode<T> {
+    @discardableResult
+    func insert(_ child: Node, at index: Int) throws -> Node {
         children.insert(child, at: index)
         return self
     }
+    
+    // O(n)
+    @discardableResult
+    func remove(at index: Int) -> Node {
+        children.remove(at: index)
+        return self
+    }
+    
+    //
+    // GenericNode functions
+    //
+    
+    func child(at index: Int) -> Any? {
+        return children[index]
+    }
+    
+    func getChildren() -> [GenericNode?] {
+        return children
+    }
+    
+    func append(child: GenericNode) throws -> Any {
+        return try! append(child as! Node)
+    }
+    
+    func replace(childAt: Int, with node: GenericNode) -> Any {
+        return children[childAt] = node as! Node
+    }
 }
 
-class GeneralTree<T>: Treelike {
-    var root: GeneralNode<T>?
+class GeneralTree<Key, Value>: Tree, GenericTree {
+    typealias Tree = GeneralTree<Key, Value>
+    typealias Node = GeneralTreeNode<Key, Value>
+    
+    var root: Node?
     
     //
     // Boolean tree-properties
@@ -77,84 +122,42 @@ class GeneralTree<T>: Treelike {
     //
     
     func breadth() -> Int {
-        guard let root = root else { return 0 }
-        var levelStack = [[root]]
-        levels(levelStack: &levelStack)
-        return levelStack.map { $0.count }.max()!
+        return Treesquid.breadth(of: self)
     }
     
     func count() -> Int {
-        guard let root = root else { return 0 }
-        var levelStack = [[root]]
-        levels(levelStack: &levelStack)
-        // NOTE: This duplicates the space requirement.
-        return levelStack.map { $0.count }.reduce(0, { x, y in x + y })
+        return Treesquid.count(of: self)
     }
     
     func depth() -> Int {
-        return depth(root)
+        return Treesquid.depth(of: self)
     }
     
     //
     // Tree access
     //
     
-    @discardableResult func insert(node: GeneralNode<T>) -> GeneralTree {
-        if root == nil {
-            root = node
-            return self
-        }
-        return insert(node, depth: 1, level: [root!])
+    @discardableResult func insert(node: Node) -> Tree {
+        return Treesquid.insert(within: self, newNode: node) as! Tree
     }
     
-    func levels() -> [[GeneralNode<T>]] {
-        guard let root = root else { return [] }
-        var levelStack: [[GeneralNode<T>]] = [[root]]
-        levels(levelStack: &levelStack)
-        return levelStack
+    func levels() -> [[Node]] {
+        return Treesquid.levels(of: self) as! [[Node]]
     }
     
     //
-    // Private functions
+    // GenericTree functions
     //
     
-    private func insert(_ newNode: GeneralNode<T>, depth: Int, level: [GeneralNode<T>]) -> GeneralTree<T> {
-        var nextLevel: [GeneralNode<T>] = []
-        for node in level {
-            if node.children.count == 0 {
-                try! node.append(newNode)
-                return self
-            }
-            for childIndex in 0..<node.children.count {
-                if node[childIndex] == nil {
-                    node[childIndex] = newNode
-                    return self
-                }
-                nextLevel.append(node[childIndex]!)
-            }
-        }
-        return insert(newNode, depth: depth + 1, level: nextLevel)
+    func getRoot() -> GenericNode? {
+        return root
     }
     
-    private func depth(_ node: GeneralNode<T>?) -> Int {
-        guard let node = node else { return 0 }
-        return node.children
-            .filter { $0 != nil }
-            .reduce(0, { max($0, depth($1)) })
-            + 1
+    func setRoot(_ node: GenericNode) {
+        root = node as? Node
     }
     
-    private func levels(levelStack: inout [[GeneralNode<T>]]) {
-        guard let deepestLevel = levelStack.last else { return }
-        var nextLevel: [GeneralNode<T>] = []
-        for node in deepestLevel {
-            for child in node.children {
-                if child != nil { nextLevel.append(child!) }
-            }
-        }
-        if nextLevel.isEmpty { return }
-        levelStack.append(nextLevel)
-        return levels(levelStack: &levelStack)
+    func insert(node: GenericNode) -> Any {
+        return Treesquid.insert(within: self, newNode: node)
     }
-
 }

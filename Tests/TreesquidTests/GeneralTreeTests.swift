@@ -3,37 +3,37 @@ import XCTest
 @testable import Treesquid
 
 final class GeneralTreeTests: XCTestCase {
-    static let treeSixLevels = GeneralTree<String>()
-        .insert(node: GeneralNode(value: "root1"))
-        .insert(node: GeneralNode(value: "(0)2"))
-        .insert(node: GeneralNode(value: "(0)(0)3"))
-        .insert(node: GeneralNode(value: "(0)(0)(0)4"))
-        .insert(node: GeneralNode(value: "(0)(0)(0)(0)5"))
-        .insert(node: GeneralNode(value: "(0)(0)(0)(0)(0)6"))
-    static let treeTwoLevels = GeneralTree<Int>()
-        .insert(node: try! GeneralNode(value: 0)
-                    .append(GeneralNode(value: 1))
-                    .append(GeneralNode(value: 2))
-                    .append(GeneralNode(value: 3)))
-    static let nodeArity3Count3 =  try! GeneralNode<String>(value: "root")
-        .append(GeneralNode(value: "1"))
-        .append(GeneralNode(value: "2"))
-        .append(GeneralNode(value: "3"))
+    static let treeSixLevels = GeneralTree<String, Any>()
+        .insert(node: GeneralTreeNode(key: "root1"))
+        .insert(node: GeneralTreeNode(key: "(0)2"))
+        .insert(node: GeneralTreeNode(key: "(0)(0)3"))
+        .insert(node: GeneralTreeNode(key: "(0)(0)(0)4"))
+        .insert(node: GeneralTreeNode(key: "(0)(0)(0)(0)5"))
+        .insert(node: GeneralTreeNode(key: "(0)(0)(0)(0)(0)6"))
+    static let treeTwoLevels = GeneralTree<Int, Any>()
+        .insert(node: try! GeneralTreeNode(key: 0)
+                    .append(GeneralTreeNode(key: 1))
+                    .append(GeneralTreeNode(key: 2))
+                    .append(GeneralTreeNode(key: 3)))
+    static let nodeArity3Count3 =  try! GeneralTreeNode<String, Any>(key: "root")
+        .append(GeneralTreeNode(key: "1"))
+        .append(GeneralTreeNode(key: "2"))
+        .append(GeneralTreeNode(key: "3"))
     
     func testEmptyTreeIsEmpty() {
-        let emptyTree = GeneralTree<Any>()
+        let emptyTree = GeneralTree<Any, Any>()
         XCTAssert(emptyTree.isEmpty(),
                   "Empty generic tree is not empty.")
     }
     
     func testEmptyTreeZeroBreadth() {
-        let emptyTree = GeneralTree<Any>()
+        let emptyTree = GeneralTree<Any, Any>()
         XCTAssert(emptyTree.breadth() == 0,
                   "Empty generic tree's breadth is not zero.")
     }
     
     func testEmptyTreeZeroDepth() {
-        let emptyTree = GeneralTree<Any>()
+        let emptyTree = GeneralTree<Any, Any>()
         XCTAssert(emptyTree.depth() == 0,
                   "Empty generic tree's depth is not zero'.")
     }
@@ -92,14 +92,16 @@ final class GeneralTreeTests: XCTestCase {
     }
     
     func testNodeArity2ount1() {
-        let nodeArity2Count1 =  try! GeneralNode<String>(value: "root")
-            .append(GeneralNode(value: "1"))
-            .append(GeneralNode(value: "2"))
+        let nodeArity2Count1 =  try! GeneralTreeNode<String, Any>(key: "root")
+            .append(GeneralTreeNode(key: "1"))
+            .append(GeneralTreeNode(key: "2"))
         nodeArity2Count1[0] = nil
         
-        XCTAssert(nodeArity2Count1.arity() == 2,
-                  "Root node is not of arity two.")
-        XCTAssert(nodeArity2Count1.count() == 1,
-                  "Root node has not a count of 1.")
+        let arity = nodeArity2Count1.arity()
+        let count = nodeArity2Count1.count()
+        XCTAssert(arity == 1,
+                  "Root node's arity is \(arity). Expected: 1")
+        XCTAssert(count == 1,
+                  "Root node's child-count is \(count). Expected: 1")
     }
 }
