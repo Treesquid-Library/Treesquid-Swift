@@ -11,6 +11,16 @@ class BinaryTreeNode<T>: GeneralNode<T> {
     }
     
     // O(1)
+    subscript(child: Child) -> Node? {
+        get {
+            children[child.rawValue]
+        }
+        set(newChild) {
+            children[child.rawValue] = newChild
+        }
+    }
+    
+    // O(1)
     @discardableResult override func append(_ child: GeneralNode<T>) throws -> GeneralNode<T> {
         for childIndex in 0..<children.count {
             if children[childIndex] == nil {
