@@ -95,14 +95,14 @@ final class GeneralTreeTests: XCTestCase {
                   "Number of child nodes is \(numberOfNodes). Expected: 3")
     }
     
-    func testNodeArity2Count1() {
-        let nodeArity2Count1 =  try! GeneralTreeNode<String, Any>(key: "root")
+    func testNodeArity2Remove() {
+        let nodeArity2Remove =  try! GeneralTreeNode<String, Any>(key: "root")
             .append(GeneralTreeNode(key: "1"))
             .append(GeneralTreeNode(key: "2"))
-        nodeArity2Count1[0] = nil
+        nodeArity2Remove[0] = nil
         
-        let arity = nodeArity2Count1.arity()
-        let count = nodeArity2Count1.count()
+        let arity = nodeArity2Remove.arity()
+        let count = nodeArity2Remove.count()
         XCTAssert(arity == 1,
                   "Arity is \(arity). Expected: 1")
         XCTAssert(count == 1,

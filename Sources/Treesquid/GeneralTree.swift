@@ -1,39 +1,21 @@
 import Foundation
 
-enum NodeOperationError: Error {
-    case indexOutOfBounds
-    case childCapacityExceeded
-}
-
-class GeneralTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
-    typealias Node = GeneralTreeNode<Key, Value>
-    typealias Key = Key
-    typealias Value = Value
+public class GeneralTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, TraversableNode, MutableNode {
+    public typealias Node = GeneralTreeNode<Key, Value>
+    public typealias Key = Key
+    public typealias Value = Value
     
-    private(set) var parent: Node?
-    lazy var children: [Node] = []
-    private(set) var key: Key?
-    private(set) var value: Value?
+    private(set) public var parent: Node?
+    private(set) public var key: Key?
+    private(set) public var value: Value?
     
-    convenience init(key: Key?) {
+    public convenience init(key: Key?) {
         self.init(key: key, value: nil)
     }
     
-    init(key: Key?, value: Value?) {
+    public init(key: Key?, value: Value?) {
         self.key = key
         self.value = value
-    }
-    
-    //
-    // Node properties
-    //
-    
-    func arity() -> Int {
-        Treesquid.arity(of: self)
-    }
-    
-    func count() -> Int {
-        Treesquid.count(of: self)
     }
     
     //
@@ -41,71 +23,53 @@ class GeneralTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
     //
     
     // O(1)
-    subscript(index: Int) -> Node? {
+    public subscript(index: Int) -> Node? {
         get {
-            children[index]
+            child(at: index) as! Node?
         }
         set(newChild) {
-            guard let newChild = newChild else {
-                children.remove(at: index)
-                return
-            }
-            children[index] = newChild
+            newChild?.parent = self
+            set(child: newChild as Node?, at: index)
         }
     }
     
-    // O(n), but might be O(1) if no space reallocation is necessary.
-    @discardableResult
-    func append(_ child: Node) throws -> Node {
-        children.append(child)
-        return self
-    }
-    
-    // O(n)
-    @discardableResult
-    func prepend(_ child: Node) throws -> Node {
-        children.insert(child, at: 0)
-        return self
-    }
-    
-    // O(n)
-    @discardableResult
-    func insert(_ child: Node, at index: Int) throws -> Node {
-        children.insert(child, at: index)
-        return self
-    }
-    
-    // O(n)
-    @discardableResult
-    func remove(at index: Int) -> Node {
-        children.remove(at: index)
-        return self
-    }
-    
     //
-    // GenericNode functions
+    // MutableNode
     //
     
-    func child(at index: Int) -> Any? {
-        return children[index]
+    @discardableResult
+    public func append(_ child: GeneralTreeNode<Key, Value>) throws -> GeneralTreeNode<Key, Value> {
+        child.parent = self;
+        return try super.append(child) as! GeneralTreeNode<Key, Value>
     }
     
-    func getChildren() -> [GenericNode?] {
-        return children
+    @discardableResult
+    public func prepend(_ child: GeneralTreeNode<Key, Value>) throws -> GeneralTreeNode<Key, Value> {
+        child.parent = self;
+        return try super.prepend(child) as! GeneralTreeNode<Key, Value>
     }
     
-    func append(child: GenericNode) throws -> Any {
-        return try! append(child as! Node)
+    @discardableResult
+    public func insert(_ child: GeneralTreeNode<Key, Value>, at index: Int) throws -> GeneralTreeNode<Key, Value> {
+        child.parent = self;
+        return try super.insert(child, at: index) as! GeneralTreeNode<Key, Value>
     }
     
-    func replace(childAt: Int, with node: GenericNode) -> Any {
-        return children[childAt] = node as! Node
+    @discardableResult
+    public override func remove(at index: Int) -> GeneralTreeNode<Key, Value> {
+        return super.remove(at: index) as! GeneralTreeNode<Key, Value>
+    }
+    
+    @discardableResult
+    public func replace(childAt: Int, with node: GeneralTreeNode<Key, Value>) -> GeneralTreeNode<Key, Value> {
+        node.parent = self
+        return replace(childAt: childAt, with: node)
     }
 }
 
-class GeneralTree<Key, Value>: Tree, GenericTree {
-    typealias Tree = GeneralTree<Key, Value>
-    typealias Node = GeneralTreeNode<Key, Value>
+public class GeneralTree<Key, Value>: Tree, GenericTree {
+    public typealias Tree = GeneralTree<Key, Value>
+    public typealias Node = GeneralTreeNode<Key, Value>
     
     var root: Node?
     
@@ -113,7 +77,7 @@ class GeneralTree<Key, Value>: Tree, GenericTree {
     // Boolean tree-properties
     //
     
-    func isEmpty() -> Bool {
+    public func isEmpty() -> Bool {
         return root == nil
     }
     
@@ -121,15 +85,15 @@ class GeneralTree<Key, Value>: Tree, GenericTree {
     // Non-boolean tree-properties
     //
     
-    func breadth() -> Int {
+    public func breadth() -> Int {
         return Treesquid.breadth(of: self)
     }
     
-    func count() -> Int {
+    public func count() -> Int {
         return Treesquid.count(of: self)
     }
     
-    func depth() -> Int {
+    public func depth() -> Int {
         return Treesquid.depth(of: self)
     }
     
@@ -137,7 +101,8 @@ class GeneralTree<Key, Value>: Tree, GenericTree {
     // Tree access
     //
     
-    @discardableResult func insert(node: Node) -> Tree {
+    @discardableResult
+    public func insert(node: Node) -> Tree {
         return Treesquid.insert(within: self, newNode: node) as! Tree
     }
     

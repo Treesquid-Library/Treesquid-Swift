@@ -1,3 +1,8 @@
+public enum NodeOperationError: Error {
+    case indexOutOfBounds
+    case childCapacityExceeded
+}
+
 internal protocol GenericNode {
     func arity() -> Int
     
@@ -12,7 +17,7 @@ internal protocol GenericNode {
     func replace(childAt: Int, with node: GenericNode) -> Any
 }
 
-protocol TraversableNode {
+public protocol TraversableNode {
     associatedtype Node
     associatedtype Key
     associatedtype Value
@@ -31,7 +36,7 @@ protocol TraversableNode {
     subscript(index: Int) -> Node? { get }
 }
 
-protocol MutableNode {
+public protocol MutableNode {
     associatedtype Node
     
     // O(1) for get
@@ -39,11 +44,20 @@ protocol MutableNode {
     //      is no space reallocation is necessary.
     subscript(index: Int) -> Node? { get set }
     
+    @discardableResult
     func append(_ child: Node) throws -> Node
 
+    @discardableResult
     func prepend(_ child: Node) throws -> Node
     
+    @discardableResult
     func insert(_ child: Node, at index: Int) throws -> Node
+    
+    @discardableResult
+    func remove(at index: Int) -> Node
+    
+    @discardableResult
+    func replace(childAt: Int, with node: Node) -> Node
 }
 
 internal protocol GenericTree {
@@ -56,7 +70,7 @@ internal protocol GenericTree {
     func insert(node: GenericNode) -> Any
 }
 
-protocol Tree {
+public protocol Tree {
     associatedtype Tree
     associatedtype Node
     

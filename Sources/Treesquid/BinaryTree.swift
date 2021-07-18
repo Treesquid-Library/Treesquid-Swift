@@ -1,18 +1,18 @@
 import Foundation
 
-class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
-    typealias Node = BinaryTreeNode<Key, Value>
-    typealias Key = Key
-    typealias Value = Value
+public class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
+    public typealias Node = BinaryTreeNode<Key, Value>
+    public typealias Key = Key
+    public typealias Value = Value
     
     enum Child: Int {
         case left = 0, right
     }
     
-    private(set) var parent: Node?
-    lazy var children: [Node?] = [ nil, nil ]
-    private(set) var key: Key?
-    private(set) var value: Value?
+    private(set) public var parent: Node?
+    private lazy var children: [Node?] = [ nil, nil ]
+    private(set) public var key: Key?
+    private(set) public var value: Value?
     
     convenience init(key: Key?) {
         self.init(key: key, value: nil)
@@ -27,11 +27,11 @@ class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
     // Node properties
     //
     
-    func arity() -> Int {
+    public func arity() -> Int {
         Treesquid.arity(of: self)
     }
     
-    func count() -> Int {
+    public func count() -> Int {
         Treesquid.count(of: self)
     }
     
@@ -40,7 +40,7 @@ class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
     //
     
     // O(1)
-    subscript(index: Int) -> Node? {
+    public subscript(index: Int) -> Node? {
         get {
             children[index]
         }
@@ -55,15 +55,17 @@ class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
             children[child.rawValue]
         }
         set(newChild) {
+            newChild?.parent = self
             children[child.rawValue] = newChild
         }
     }
     
     // O(1)
     @discardableResult
-    func append(_ child: Node) throws -> Node {
+    public func append(_ child: Node) throws -> Node {
         for childIndex in 0..<children.count {
             if children[childIndex] == nil {
+                child.parent = self;
                 children[childIndex] = child
                 return self
             }
@@ -73,7 +75,8 @@ class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
     
     // O(1)
     @discardableResult
-    func prepend(_ child: Node) throws -> Node {
+    public func prepend(_ child: Node) throws -> Node {
+        child.parent = self;
         if children[Child.left.rawValue] == nil {
             children[Child.left.rawValue] = child
             return self
@@ -87,7 +90,7 @@ class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
     
     // O(1)
     @discardableResult
-    func insert(_ child: Node, at index: Int) throws -> Node {
+    public func insert(_ child: Node, at index: Int) throws -> Node {
         if index < 0 || index >= 2 {
             throw NodeOperationError.indexOutOfBounds
         }
@@ -95,10 +98,25 @@ class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
             return try! prepend(child)
         }
         if children[Child.right.rawValue] == nil {
+            child.parent = self;
             children[Child.right.rawValue] = child
             return self
         }
         throw NodeOperationError.childCapacityExceeded
+    }
+    
+    // O(1)
+    @discardableResult
+    public func remove(at index: Int) -> Node {
+        children[index] = nil
+        return self
+    }
+    
+    // O(1)
+    @discardableResult
+    public func replace(childAt: Int, with node: Node) -> Node {
+        children[childAt] = node
+        return self
     }
     
     //
@@ -113,12 +131,15 @@ class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
         return children
     }
     
+    @discardableResult
     func append(child: GenericNode) throws -> Any {
         return try! append(child as! Node)
     }
     
+    @discardableResult
     func replace(childAt: Int, with node: GenericNode) -> Any {
-        return children[childAt] = node as? Node
+        children[childAt] = node as? BinaryTreeNode<Key, Value>
+        return self
     }
 }
 
