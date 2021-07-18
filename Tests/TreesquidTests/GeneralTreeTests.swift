@@ -22,76 +22,80 @@ final class GeneralTreeTests: XCTestCase {
     
     func testEmptyTreeIsEmpty() {
         let emptyTree = GeneralTree<Any, Any>()
-        XCTAssert(emptyTree.isEmpty(),
-                  "Empty generic tree is not empty.")
+        XCTAssert(emptyTree.isEmpty(), "Tree is not empty.")
     }
     
     func testEmptyTreeZeroBreadth() {
         let emptyTree = GeneralTree<Any, Any>()
-        XCTAssert(emptyTree.breadth() == 0,
-                  "Empty generic tree's breadth is not zero.")
+        let breadth = emptyTree.breadth()
+        XCTAssert(breadth == 0, "Breadth is \(breadth). Expected: 0")
     }
     
     func testEmptyTreeZeroDepth() {
         let emptyTree = GeneralTree<Any, Any>()
-        XCTAssert(emptyTree.depth() == 0,
-                  "Empty generic tree's depth is not zero'.")
+        let depth = emptyTree.depth()
+        XCTAssert(depth == 0, "Depth is \(depth). Expected: 0")
     }
     
     func testTreeSixLevelsDepth() {
-        XCTAssert(GeneralTreeTests.treeSixLevels.depth() == 6,
-                  "Generic tree with six levels has incorrect depth.")
+        let depth = GeneralTreeTests.treeSixLevels.depth()
+        XCTAssert(depth == 6, "Depth is \(depth). Expected: 6")
     }
     
     func testTreeSixLevelsBreadth() {
-        XCTAssert(GeneralTreeTests.treeSixLevels.breadth() == 1,
-                  "Generic tree with six levels has incorrect breadth.")
+        let breadth = GeneralTreeTests.treeSixLevels.breadth()
+        XCTAssert(breadth == 1,
+                  "Breadth is \(breadth). Expected: 1")
     }
     
     func testTreeSixLevelsLevels() {
         let depth = GeneralTreeTests.treeSixLevels.depth()
         let levels = GeneralTreeTests.treeSixLevels.levels()
         XCTAssert(levels.count == depth,
-                  "Tree of six levels reports wrong number of levels.")
+                  "Levels/depth are \(levels.count)\(depth). Expected them to be equal.")
         for level in 0..<levels.count {
-            XCTAssert(levels[level].count == 1,
-                      "Tree of six levels' level has an incorrect number of nodes.")
+            let numberOfNodes = levels[level].count
+            XCTAssert(numberOfNodes == 1,
+                      "Level \(level + 1) has \(numberOfNodes) nodes. Expected: 1")
         }
     }
 
     func testTreeTwoLevelsDepth() {
-        XCTAssert(GeneralTreeTests.treeTwoLevels.depth() == 2,
-                  "Generic tree with six levels has incorrect depth.")
+        let depth = GeneralTreeTests.treeTwoLevels.depth()
+        XCTAssert(depth == 2, "Depth is \(depth). Expected: 2")
     }
     
     func testTreeTwoLevelsBreadth() {
-        XCTAssert(GeneralTreeTests.treeTwoLevels.breadth() == 3,
-                  "Generic tree with six levels has incorrect breadth.")
+        let breadth = GeneralTreeTests.treeTwoLevels.breadth()
+        XCTAssert(breadth == 3, "Breadth is \(breadth). Expected: 3")
     }
     
     func testTreeTwoLevelsCount() {
-        XCTAssert(GeneralTreeTests.treeTwoLevels.count() == 4,
-                  "Tree of two levels has more (or less) than four nodes.")
+        let numberOfNodes = GeneralTreeTests.treeTwoLevels.count()
+        XCTAssert(numberOfNodes == 4,
+                  "Tree has \(numberOfNodes) nodes. Expected: 4")
     }
     
     func testTreeTwoLevelsLevels() {
         let levels = GeneralTreeTests.treeTwoLevels.levels()
         XCTAssert(levels.count == 2,
-                  "Tree of two levels has more (or less) than two levels.")
+                  "Tree has \(levels.count) levels. Expected: 2")
         XCTAssert(levels[0].count == 1,
-                  "Tree of two levels' level has an incorrect number of nodes.")
+                  "Level 1 has \(levels[0].count) nodes. Expected: 1")
         XCTAssert(levels[1].count == 3,
-                  "Tree of two levels' level has an incorrect number of nodes.")
+                  "Level 2 has \(levels[1].count) nodes. Expected: 3")
     }
 
     func testNodeArityAndCountMatch() {
+        let arity = GeneralTreeTests.nodeArity3Count3.arity()
+        let numberOfNodes = GeneralTreeTests.nodeArity3Count3.count()
         XCTAssert(GeneralTreeTests.nodeArity3Count3.arity() == 3,
-                  "Root node is not of arity three.")
+                  "Arity is \(arity). Expected: 3")
         XCTAssert(GeneralTreeTests.nodeArity3Count3.count() == 3,
-                  "Root node has not a count of three.")
+                  "Number of child nodes is \(numberOfNodes). Expected: 3")
     }
     
-    func testNodeArity2ount1() {
+    func testNodeArity2Count1() {
         let nodeArity2Count1 =  try! GeneralTreeNode<String, Any>(key: "root")
             .append(GeneralTreeNode(key: "1"))
             .append(GeneralTreeNode(key: "2"))
@@ -100,8 +104,8 @@ final class GeneralTreeTests: XCTestCase {
         let arity = nodeArity2Count1.arity()
         let count = nodeArity2Count1.count()
         XCTAssert(arity == 1,
-                  "Root node's arity is \(arity). Expected: 1")
+                  "Arity is \(arity). Expected: 1")
         XCTAssert(count == 1,
-                  "Root node's child-count is \(count). Expected: 1")
+                  "Number of child nodes is \(count). Expected: 1")
     }
 }

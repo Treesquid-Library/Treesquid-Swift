@@ -18,50 +18,51 @@ final class BinaryTreeTests: XCTestCase {
     
     func testEmptyTreeIsEmpty() {
         let emptyTree = BinaryTree<Any, Any>()
-        XCTAssert(emptyTree.isEmpty(),
-                  "Empty binary tree is not empty.")
+        XCTAssert(emptyTree.isEmpty(), "Tree is not empty.")
     }
     
     func testEmptyTreeZeroBreadth() {
         let emptyTree = BinaryTree<Any, Any>()
-        XCTAssert(emptyTree.breadth() == 0,
-                  "Empty binary tree's breadth is not zero.")
+        let breadth = emptyTree.breadth()
+        XCTAssert(breadth == 0, "Breadth is \(breadth). Expected: 0")
     }
     
     func testEmptyTreeZeroDepth() {
         let emptyTree = BinaryTree<Any, Any>()
-        XCTAssert(emptyTree.depth() == 0,
-                  "Empty binary tree's depth is not zero'.")
+        let depth = emptyTree.depth()
+        XCTAssert(depth == 0, "Depth is \(depth). Expected: 0")
     }
     
     func testFullTreeTwoLevelsDepth() {
-        XCTAssert(BinaryTreeTests.treeFullThreeLevels.depth() == 3,
-                  "Full tree of three levels has incorrect depth.")
+        let depth = BinaryTreeTests.treeFullThreeLevels.depth()
+        XCTAssert(depth == 3, "Depth is \(depth). Expected: 3")
     }
     
     func testFullTreeTwoLevelsBreadth() {
-        XCTAssert(BinaryTreeTests.treeFullThreeLevels.breadth() == 4,
-                  "Full tree of three levels has incorrect breadth.")
+        let breadth = BinaryTreeTests.treeFullThreeLevels.breadth()
+        XCTAssert(breadth == 4, "Breadth is \(breadth). Expected: 4")
     }
     
     func testFullTreeTwoLevelsLevels() {
         let levels = BinaryTreeTests.treeFullThreeLevels.levels()
         XCTAssert(levels.count == 3,
-                  "Full tree of three levels reports wrong number of levels.")
+                  "Number of levels is \(levels.count). Expected: 3")
         for level in 0..<levels.count {
-            XCTAssert(levels[level].count == Int(pow(2.0, Double(level))),
-                      "Full tree of three levels' level has an incorrect number of nodes.")
+            let nodesInLevel = levels[level].count
+            let expectedNumberOfNodes = Int(pow(2.0, Double(level)))
+            XCTAssert(nodesInLevel == expectedNumberOfNodes,
+                      "Level \(level + 1) has \(nodesInLevel) nodes. Expected: \(expectedNumberOfNodes)")
         }
     }
     
     func testTreeTwoLevelsDepth() {
-        XCTAssert(BinaryTreeTests.treeTwoLevels.depth() == 2,
-                  "Tree of two levels has incorrect depth.")
+        let depth = BinaryTreeTests.treeTwoLevels.depth()
+        XCTAssert(depth == 2, "Depth is \(depth). Expected: 2")
     }
     
     func testTreeTwoLevelsBreadth() {
-        XCTAssert(BinaryTreeTests.treeTwoLevels.breadth() == 2,
-                  "Tree of two levels has incorrect breadth.")
+        let breadth = BinaryTreeTests.treeTwoLevels.breadth()
+        XCTAssert(breadth == 2, "Breadth is \(breadth). Expected: 2")
     }
     
     func testTreeTwoLevelsContents() {
@@ -70,13 +71,14 @@ final class BinaryTreeTests: XCTestCase {
             return
         }
         XCTAssert(rootNode.key == 0,
-                  "Root node's value is incorrect. Expected: 0")
+                  "Root node's key is \(rootNode.key). Expected: 0")
         for index in 0...1 {
             XCTAssert(rootNode[index] != nil,
-                      "Root node's child at \(index) is nil.")
+                      "Child node at index \(index) is nil.")
+            let observedKey = rootNode[index]!.key
             let expectedKey = index + 1
-            XCTAssert(rootNode[index]!.key == expectedKey,
-                      "Root node's child at \(index) has an incorrect key. Expected: \(expectedKey)")
+            XCTAssert(observedKey == expectedKey,
+                      "Child node at \(index) has a key of \(observedKey). Expected: \(expectedKey)")
         }
     }
     
@@ -85,13 +87,25 @@ final class BinaryTreeTests: XCTestCase {
             XCTFail("Root node is nil.")
             return
         }
-        XCTAssert(rootNode[0] === rootNode[BinaryTreeNode<Int, Any>.Child.left.rawValue],
-                  "Subscript: index 0 is not equivalent to Child.left.rawValue.")
-        XCTAssert(rootNode[1] === rootNode[BinaryTreeNode<Int, Any>.Child.right.rawValue],
-                  "Subscript: index 0 is not equivalent to Child.right.rawValue.")
-        XCTAssert(rootNode[BinaryTreeNode.Child.left] === rootNode[BinaryTreeNode<Int, Any>.Child.left.rawValue],
-                  "Subscript: index 0 is not equivalent to Child.left.rawValue.")
-        XCTAssert(rootNode[BinaryTreeNode.Child.right] === rootNode[BinaryTreeNode<Int, Any>.Child.right.rawValue],
-                  "Subscript: index 0 is not equivalent to Child.right.rawValue.")
+        BinaryTreeTests.compareSubscriptIndex(index: 0,
+                                              alternativeIndex: BinaryTreeNode<Int, Any>.Child.left.rawValue)
+        BinaryTreeTests.compareSubscriptIndex(index: 1,
+                                              alternativeIndex: BinaryTreeNode<Int, Any>.Child.right.rawValue)
+        BinaryTreeTests.compareSubscriptSymbolic(node: rootNode,
+                                                 index: 0,
+                                                 symbolicIndex: BinaryTreeNode<Int, Any>.Child.left)
+        BinaryTreeTests.compareSubscriptSymbolic(node: rootNode,
+                                                 index: 1,
+                                                 symbolicIndex: BinaryTreeNode<Int, Any>.Child.right)
+    }
+    
+    private static func compareSubscriptIndex(index: Int, alternativeIndex: Int) {
+        XCTAssert(index == alternativeIndex,
+                  "Subscript index \(index) differs from Child.'left or right'.rawValue.")
+    }
+    
+    private static func compareSubscriptSymbolic(node: BinaryTreeNode<Int, Any>, index: Int, symbolicIndex: BinaryTreeNode<Int, Any>.Child) {
+        XCTAssert(node[index] === node[symbolicIndex],
+                  "Subscript index \(index) return a different node than Child.'left or right'.")
     }
 }
