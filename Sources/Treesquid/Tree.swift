@@ -4,7 +4,7 @@ public enum NodeOperationError: Error {
 }
 
 internal protocol GenericNode {
-    func arity() -> Int
+    func degree() -> Int
     
     func child(at index: Int) -> Any?
     
@@ -27,9 +27,9 @@ public protocol TraversableNode {
     var value: Value? { get }
     
     // O(1)
-    func arity() -> Int
+    func degree() -> Int
     
-    // O(n), where n is the arity of the node.
+    // O(n), where n is the degree of the node.
     func count() -> Int
     
     // O(1)
@@ -40,7 +40,7 @@ public protocol MutableNode {
     associatedtype Node
     
     // O(1) for get
-    // O(n) for set, where n is the arity of the node, but might be O(1)
+    // O(n) for set, where n is the degree of the node, but might be O(1)
     //      is no space reallocation is necessary.
     subscript(index: Int) -> Node? { get set }
     
@@ -94,7 +94,7 @@ public protocol Tree {
 // GenericNode
 //
 
-internal func arity(of node: GenericNode) -> Int {
+internal func degree(of node: GenericNode) -> Int {
     return node.getChildren().count
 }
 
@@ -165,11 +165,11 @@ internal func insert(within tree: GenericTree, newNode: GenericNode) -> GenericT
 fileprivate func insert(within tree: GenericTree, newNode: GenericNode, depth: Int, level: [GenericNode]) -> GenericTree {
     var nextLevel: [GenericNode] = []
     for node in level {
-        if node.arity() == 0 {
+        if node.degree() == 0 {
             try! node.append(child: newNode)
             return tree
         }
-        for childIndex in 0..<node.arity() {
+        for childIndex in 0..<node.degree() {
             if node.child(at: childIndex) == nil {
                 node.replace(childAt: childIndex, with: newNode)
                 return tree

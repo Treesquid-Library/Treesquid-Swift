@@ -27,8 +27,8 @@ public class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNo
     // Node properties
     //
     
-    public func arity() -> Int {
-        Treesquid.arity(of: self)
+    public func degree() -> Int {
+        Treesquid.degree(of: self)
     }
     
     public func count() -> Int {

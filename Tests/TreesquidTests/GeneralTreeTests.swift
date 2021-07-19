@@ -15,7 +15,7 @@ final class GeneralTreeTests: XCTestCase {
                     .append(GeneralTreeNode(key: 1))
                     .append(GeneralTreeNode(key: 2))
                     .append(GeneralTreeNode(key: 3)))
-    static let nodeArity3Count3 =  try! GeneralTreeNode<String, Any>(key: "root")
+    static let nodeDegree3Count3 =  try! GeneralTreeNode<String, Any>(key: "root")
         .append(GeneralTreeNode(key: "1"))
         .append(GeneralTreeNode(key: "2"))
         .append(GeneralTreeNode(key: "3"))
@@ -86,25 +86,25 @@ final class GeneralTreeTests: XCTestCase {
                   "Level 2 has \(levels[1].count) nodes. Expected: 3")
     }
 
-    func testNodeArityAndCountMatch() {
-        let arity = GeneralTreeTests.nodeArity3Count3.arity()
-        let numberOfNodes = GeneralTreeTests.nodeArity3Count3.count()
-        XCTAssert(GeneralTreeTests.nodeArity3Count3.arity() == 3,
-                  "Arity is \(arity). Expected: 3")
-        XCTAssert(GeneralTreeTests.nodeArity3Count3.count() == 3,
+    func testNodeDegreeAndCountMatch() {
+        let degree = GeneralTreeTests.nodeDegree3Count3.degree()
+        let numberOfNodes = GeneralTreeTests.nodeDegree3Count3.count()
+        XCTAssert(GeneralTreeTests.nodeDegree3Count3.degree() == 3,
+                  "Degree is \(degree). Expected: 3")
+        XCTAssert(GeneralTreeTests.nodeDegree3Count3.count() == 3,
                   "Number of child nodes is \(numberOfNodes). Expected: 3")
     }
     
-    func testNodeArity2Remove() {
-        let nodeArity2Remove =  try! GeneralTreeNode<String, Any>(key: "root")
+    func testNodeDegree2Remove() {
+        let nodeDegree2Remove =  try! GeneralTreeNode<String, Any>(key: "root")
             .append(GeneralTreeNode(key: "1"))
             .append(GeneralTreeNode(key: "2"))
-        nodeArity2Remove[0] = nil
+        nodeDegree2Remove[0] = nil
         
-        let arity = nodeArity2Remove.arity()
-        let count = nodeArity2Remove.count()
-        XCTAssert(arity == 1,
-                  "Arity is \(arity). Expected: 1")
+        let degree = nodeDegree2Remove.degree()
+        let count = nodeDegree2Remove.count()
+        XCTAssert(degree == 1,
+                  "Degree is \(degree). Expected: 1")
         XCTAssert(count == 1,
                   "Number of child nodes is \(count). Expected: 1")
     }
