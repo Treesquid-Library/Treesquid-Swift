@@ -85,8 +85,8 @@ public class GeneralTree<Key, Value>: Tree, GenericTree {
     // Non-boolean tree-properties
     //
     
-    public func breadth() -> Int {
-        return Treesquid.breadth(of: self)
+    public func width() -> Int {
+        return Treesquid.width(of: self)
     }
     
     public func count() -> Int {

@@ -21,10 +21,10 @@ final class BinaryTreeTests: XCTestCase {
         XCTAssert(emptyTree.isEmpty(), "Tree is not empty.")
     }
     
-    func testEmptyTreeZeroBreadth() {
+    func testEmptyTreeZeroWidth() {
         let emptyTree = BinaryTree<Any, Any>()
-        let breadth = emptyTree.breadth()
-        XCTAssert(breadth == 0, "Breadth is \(breadth). Expected: 0")
+        let width = emptyTree.width()
+        XCTAssert(width == 0, "Width is \(width). Expected: 0")
     }
     
     func testEmptyTreeZeroDepth() {
@@ -38,9 +38,9 @@ final class BinaryTreeTests: XCTestCase {
         XCTAssert(depth == 3, "Depth is \(depth). Expected: 3")
     }
     
-    func testFullTreeTwoLevelsBreadth() {
-        let breadth = BinaryTreeTests.treeFullThreeLevels.breadth()
-        XCTAssert(breadth == 4, "Breadth is \(breadth). Expected: 4")
+    func testFullTreeTwoLevelsWidth() {
+        let width = BinaryTreeTests.treeFullThreeLevels.width()
+        XCTAssert(width == 4, "Width is \(width). Expected: 4")
     }
     
     func testFullTreeTwoLevelsLevels() {
@@ -60,9 +60,9 @@ final class BinaryTreeTests: XCTestCase {
         XCTAssert(depth == 2, "Depth is \(depth). Expected: 2")
     }
     
-    func testTreeTwoLevelsBreadth() {
-        let breadth = BinaryTreeTests.treeTwoLevels.breadth()
-        XCTAssert(breadth == 2, "Breadth is \(breadth). Expected: 2")
+    func testTreeTwoLevelsWidth() {
+        let width = BinaryTreeTests.treeTwoLevels.width()
+        XCTAssert(width == 2, "Width is \(width). Expected: 2")
     }
     
     func testTreeTwoLevelsContents() {

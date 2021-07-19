@@ -153,8 +153,8 @@ class BinaryTree<Key, Value>: GenericTree {
         return root == nil
     }
     
-    func breadth() -> Int {
-        return Treesquid.breadth(of: self)
+    func width() -> Int {
+        return Treesquid.width(of: self)
     }
     
     func count() -> Int {

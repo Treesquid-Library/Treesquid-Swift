@@ -25,10 +25,10 @@ final class GeneralTreeTests: XCTestCase {
         XCTAssert(emptyTree.isEmpty(), "Tree is not empty.")
     }
     
-    func testEmptyTreeZeroBreadth() {
+    func testEmptyTreeZeroWidth() {
         let emptyTree = GeneralTree<Any, Any>()
-        let breadth = emptyTree.breadth()
-        XCTAssert(breadth == 0, "Breadth is \(breadth). Expected: 0")
+        let width = emptyTree.width()
+        XCTAssert(width == 0, "Width is \(width). Expected: 0")
     }
     
     func testEmptyTreeZeroDepth() {
@@ -42,10 +42,10 @@ final class GeneralTreeTests: XCTestCase {
         XCTAssert(depth == 6, "Depth is \(depth). Expected: 6")
     }
     
-    func testTreeSixLevelsBreadth() {
-        let breadth = GeneralTreeTests.treeSixLevels.breadth()
-        XCTAssert(breadth == 1,
-                  "Breadth is \(breadth). Expected: 1")
+    func testTreeSixLevelsWidth() {
+        let width = GeneralTreeTests.treeSixLevels.width()
+        XCTAssert(width == 1,
+                  "Width is \(width). Expected: 1")
     }
     
     func testTreeSixLevelsLevels() {
@@ -65,9 +65,9 @@ final class GeneralTreeTests: XCTestCase {
         XCTAssert(depth == 2, "Depth is \(depth). Expected: 2")
     }
     
-    func testTreeTwoLevelsBreadth() {
-        let breadth = GeneralTreeTests.treeTwoLevels.breadth()
-        XCTAssert(breadth == 3, "Breadth is \(breadth). Expected: 3")
+    func testTreeTwoLevelsWidth() {
+        let width = GeneralTreeTests.treeTwoLevels.width()
+        XCTAssert(width == 3, "Width is \(width). Expected: 3")
     }
     
     func testTreeTwoLevelsCount() {

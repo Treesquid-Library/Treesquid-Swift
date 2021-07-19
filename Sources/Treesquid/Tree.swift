@@ -78,7 +78,7 @@ public protocol Tree {
     func isEmpty() -> Bool
     
     // O(n), where n is the number of nodes in the tree.
-    func breadth() -> Int
+    func width() -> Int
 
     // O(n), where n is the number of nodes in the tree.
     func count() -> Int
@@ -106,7 +106,7 @@ internal func count(of node: GenericNode) -> Int {
 // GenericTree
 //
 
-internal func breadth(of tree: GenericTree) -> Int {
+internal func width(of tree: GenericTree) -> Int {
     guard let root = tree.getRoot() else { return 0 }
     var levelStack = [[root]]
     levels(levelStack: &levelStack)
