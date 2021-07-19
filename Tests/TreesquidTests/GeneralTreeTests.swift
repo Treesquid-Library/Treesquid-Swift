@@ -88,11 +88,11 @@ final class GeneralTreeTests: XCTestCase {
 
     func testNodeDegreeAndCountMatch() {
         let degree = GeneralTreeTests.nodeDegree3Count3.degree()
-        let numberOfNodes = GeneralTreeTests.nodeDegree3Count3.count()
-        XCTAssert(GeneralTreeTests.nodeDegree3Count3.degree() == 3,
+        let capacity = GeneralTreeTests.nodeDegree3Count3.capacity()
+        XCTAssert(degree == 3,
                   "Degree is \(degree). Expected: 3")
-        XCTAssert(GeneralTreeTests.nodeDegree3Count3.count() == 3,
-                  "Number of child nodes is \(numberOfNodes). Expected: 3")
+        XCTAssert(capacity == 3,
+                  "Capacity is \(capacity). Expected: 3")
     }
     
     func testNodeDegree2Remove() {
@@ -102,10 +102,10 @@ final class GeneralTreeTests: XCTestCase {
         nodeDegree2Remove[0] = nil
         
         let degree = nodeDegree2Remove.degree()
-        let count = nodeDegree2Remove.count()
+        let capacity = nodeDegree2Remove.capacity()
         XCTAssert(degree == 1,
                   "Degree is \(degree). Expected: 1")
-        XCTAssert(count == 1,
-                  "Number of child nodes is \(count). Expected: 1")
+        XCTAssert(capacity == 1,
+                  "Capacity is \(capacity). Expected: 1")
     }
 }

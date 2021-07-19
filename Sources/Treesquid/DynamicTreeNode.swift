@@ -15,8 +15,8 @@ public class DynamicTreeNode<Key, Value>: GenericNode {
         Treesquid.degree(of: self)
     }
     
-    public func count() -> Int {
-        Treesquid.count(of: self)
+    public func capacity() -> Int {
+        Treesquid.capacity(of: self)
     }
     
     //

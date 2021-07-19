@@ -31,8 +31,8 @@ public class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNo
         Treesquid.degree(of: self)
     }
     
-    public func count() -> Int {
-        Treesquid.count(of: self)
+    public func capacity() -> Int {
+        Treesquid.capacity(of: self)
     }
     
     //

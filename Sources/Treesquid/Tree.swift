@@ -4,6 +4,8 @@ public enum NodeOperationError: Error {
 }
 
 internal protocol GenericNode {
+    func capacity() -> Int
+    
     func degree() -> Int
     
     func child(at index: Int) -> Any?
@@ -27,10 +29,10 @@ public protocol TraversableNode {
     var value: Value? { get }
     
     // O(1)
-    func degree() -> Int
+    func capacity() -> Int
     
     // O(n), where n is the degree of the node.
-    func count() -> Int
+    func degree() -> Int
     
     // O(1)
     subscript(index: Int) -> Node? { get }
@@ -94,11 +96,11 @@ public protocol Tree {
 // GenericNode
 //
 
-internal func degree(of node: GenericNode) -> Int {
+internal func capacity(of node: GenericNode) -> Int {
     return node.getChildren().count
 }
 
-internal func count(of node: GenericNode) -> Int {
+internal func degree(of node: GenericNode) -> Int {
     return node.getChildren().map { $0 != nil ? 1 : 0 }.reduce(0, { x, y in x + y })
 }
 
@@ -169,7 +171,7 @@ fileprivate func insert(within tree: GenericTree, newNode: GenericNode, depth: I
             try! node.append(child: newNode)
             return tree
         }
-        for childIndex in 0..<node.degree() {
+        for childIndex in 0..<node.capacity() {
             if node.child(at: childIndex) == nil {
                 node.replace(childAt: childIndex, with: newNode)
                 return tree
