@@ -1,33 +1,21 @@
 import Foundation
 
-public protocol ArityM { var m: Int { get } }
-public class Arity1: ArityM { public let m = 1 }
-public class Arity2: ArityM { public let m = 2 }
-public class Arity3: ArityM { public let m = 3 }
-public class Arity4: ArityM { public let m = 4 }
-public class Arity5: ArityM { public let m = 5 }
-public class Arity6: ArityM { public let m = 6 }
-public class Arity7: ArityM { public let m = 7 }
-public class Arity8: ArityM { public let m = 8 }
-public class Arity9: ArityM { public let m = 9 }
-public class Arity10: ArityM { public let m = 10 }
-public class Arity11: ArityM { public let m = 11 }
-public class Arity12: ArityM { public let m = 12 }
-
-public class MAryTreeNode<M: ArityM, Key, Value>: DynamicTreeNode<Key, Value>, TraversableNode, MutableNode {
-    public typealias Node = MAryTreeNode<M, Key, Value>
+public class MAryTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, TraversableNode, MutableNode {
+    public typealias Node = MAryTreeNode<Key, Value>
     public typealias Key = Key
     public typealias Value = Value
     
+    private(set) public var m: UInt32
     private(set) public var parent: Node?
     private(set) public var key: Key?
     private(set) public var value: Value?
     
-    public convenience init(key: Key?) {
-        self.init(key: key, value: nil)
+    public convenience init(m: UInt32, key: Key?) {
+        self.init(m: m, key: key, value: nil)
     }
     
-    public init(key: Key?, value: Value?) {
+    public init(m: UInt32, key: Key?, value: Value?) {
+        self.m = m
         self.key = key
         self.value = value
     }
@@ -52,31 +40,41 @@ public class MAryTreeNode<M: ArityM, Key, Value>: DynamicTreeNode<Key, Value>, T
     //
     
     @discardableResult
-    public func append(_ child: MAryTreeNode<M, Key, Value>) throws -> MAryTreeNode<M, Key, Value> {
+    public func append(_ child: MAryTreeNode<Key, Value>) throws -> MAryTreeNode<Key, Value> {
+        if degree() >= m {
+            throw NodeOperationError.childCapacityExceeded
+        }
         child.parent = self;
-        return try super.append(child) as! MAryTreeNode<M, Key, Value>
+        return try super.append(child) as! MAryTreeNode<Key, Value>
     }
     
     @discardableResult
-    public func prepend(_ child: MAryTreeNode<M, Key, Value>) throws -> MAryTreeNode<M, Key, Value> {
+    public func prepend(_ child: MAryTreeNode<Key, Value>) throws -> MAryTreeNode<Key, Value> {
+        if degree() >= m {
+            throw NodeOperationError.childCapacityExceeded
+        }
         child.parent = self;
-        return try super.prepend(child) as! MAryTreeNode<M, Key, Value>
+        return try super.prepend(child) as! MAryTreeNode<Key, Value>
     }
     
     @discardableResult
-    public func insert(_ child: MAryTreeNode<M, Key, Value>, at index: Int) throws -> MAryTreeNode<M, Key, Value> {
+    public func insert(_ child: MAryTreeNode<Key, Value>, at index: Int) throws -> MAryTreeNode<Key, Value> {
+        if degree() >= m {
+            throw NodeOperationError.childCapacityExceeded
+        }
         child.parent = self;
-        return try super.insert(child, at: index) as! MAryTreeNode<M, Key, Value>
+        return try super.insert(child, at: index) as! MAryTreeNode<Key, Value>
     }
     
     @discardableResult
-    public override func remove(at index: Int) -> MAryTreeNode<M, Key, Value> {
-        return super.remove(at: index) as! MAryTreeNode<M, Key, Value>
+    public override func remove(at index: Int) -> MAryTreeNode<Key, Value> {
+        return super.remove(at: index) as! MAryTreeNode<Key, Value>
     }
     
     @discardableResult
-    public func replace(childAt: Int, with node: MAryTreeNode<M, Key, Value>) -> MAryTreeNode<M, Key, Value> {
+    public func replace(childAt: Int, with node: MAryTreeNode<Key, Value>) -> MAryTreeNode<Key, Value> {
         node.parent = self
         return replace(childAt: childAt, with: node)
     }
 }
+
