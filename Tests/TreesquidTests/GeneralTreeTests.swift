@@ -3,14 +3,14 @@ import XCTest
 @testable import Treesquid
 
 final class GeneralTreeTests: XCTestCase {
-    static let treeSixLevels = GeneralTree<String, Any>()
+    static let treeTwoLevelsTreeInsert = GeneralTree<String, Any>()
         .insert(node: GeneralTreeNode(key: "root1"))
         .insert(node: GeneralTreeNode(key: "(0)2"))
         .insert(node: GeneralTreeNode(key: "(0)(0)3"))
         .insert(node: GeneralTreeNode(key: "(0)(0)(0)4"))
         .insert(node: GeneralTreeNode(key: "(0)(0)(0)(0)5"))
         .insert(node: GeneralTreeNode(key: "(0)(0)(0)(0)(0)6"))
-    static let treeTwoLevels = GeneralTree<Int, Any>()
+    static let treeTwoLevelsNodeInsert = GeneralTree<Int, Any>()
         .insert(node: try! GeneralTreeNode(key: 0)
                     .append(GeneralTreeNode(key: 1))
                     .append(GeneralTreeNode(key: 2))
@@ -37,47 +37,52 @@ final class GeneralTreeTests: XCTestCase {
         XCTAssert(depth == 0, "Depth is \(depth). Expected: 0")
     }
     
-    func testTreeSixLevelsDepth() {
-        let depth = GeneralTreeTests.treeSixLevels.depth()
-        XCTAssert(depth == 6, "Depth is \(depth). Expected: 6")
-    }
-    
-    func testTreeSixLevelsWidth() {
-        let width = GeneralTreeTests.treeSixLevels.width()
-        XCTAssert(width == 1,
-                  "Width is \(width). Expected: 1")
-    }
-    
-    func testTreeSixLevelsLevels() {
-        let depth = GeneralTreeTests.treeSixLevels.depth()
-        let levels = GeneralTreeTests.treeSixLevels.levels()
-        XCTAssert(levels.count == depth,
-                  "Levels/depth are \(levels.count)\(depth). Expected them to be equal.")
-        for level in 0..<levels.count {
-            let numberOfNodes = levels[level].count
-            XCTAssert(numberOfNodes == 1,
-                      "Level \(level + 1) has \(numberOfNodes) nodes. Expected: 1")
-        }
-    }
-
-    func testTreeTwoLevelsDepth() {
-        let depth = GeneralTreeTests.treeTwoLevels.depth()
+    func testTreeTwoLevelsTreeInsertDepth() {
+        let depth = GeneralTreeTests.treeTwoLevelsTreeInsert.depth()
         XCTAssert(depth == 2, "Depth is \(depth). Expected: 2")
     }
     
-    func testTreeTwoLevelsWidth() {
-        let width = GeneralTreeTests.treeTwoLevels.width()
+    func testTreeTwoLevelsTreeInsertWidth() {
+        let width = GeneralTreeTests.treeTwoLevelsTreeInsert.width()
+        XCTAssert(width == 5,
+                  "Width is \(width). Expected: 5")
+    }
+    
+    func testTreeTwoLevelsTreeInsertLevels() {
+        let depth = GeneralTreeTests.treeTwoLevelsTreeInsert.depth()
+        let levels = GeneralTreeTests.treeTwoLevelsTreeInsert.levels()
+        XCTAssert(levels.count == depth,
+                  "Levels/depth are \(levels.count)\(depth). Expected them to be equal.")
+        let expectedNodes = [ 1, 5 ]
+        if levels.count != expectedNodes.count {
+            XCTFail("There are \(levels.count) levels. Expected: \(expectedNodes.count)")
+            return
+        }
+        for level in 0..<levels.count {
+            let numberOfNodes = levels[level].count
+            XCTAssert(numberOfNodes == expectedNodes[level],
+                      "Level \(level + 1) has \(numberOfNodes) nodes. Expected: \(expectedNodes[level])")
+        }
+    }
+
+    func testTreeTwoLevelsNodeInsertDepth() {
+        let depth = GeneralTreeTests.treeTwoLevelsNodeInsert.depth()
+        XCTAssert(depth == 2, "Depth is \(depth). Expected: 2")
+    }
+    
+    func testTreeTwoLevelsNodeInsertWidth() {
+        let width = GeneralTreeTests.treeTwoLevelsNodeInsert.width()
         XCTAssert(width == 3, "Width is \(width). Expected: 3")
     }
     
-    func testTreeTwoLevelsCount() {
-        let numberOfNodes = GeneralTreeTests.treeTwoLevels.count()
+    func testTreeTwoLevelsNodeInsertCount() {
+        let numberOfNodes = GeneralTreeTests.treeTwoLevelsNodeInsert.count()
         XCTAssert(numberOfNodes == 4,
                   "Tree has \(numberOfNodes) nodes. Expected: 4")
     }
     
-    func testTreeTwoLevelsLevels() {
-        let levels = GeneralTreeTests.treeTwoLevels.levels()
+    func testTreeTwoLevelsNodeInsertLevels() {
+        let levels = GeneralTreeTests.treeTwoLevelsNodeInsert.levels()
         XCTAssert(levels.count == 2,
                   "Tree has \(levels.count) levels. Expected: 2")
         XCTAssert(levels[0].count == 1,

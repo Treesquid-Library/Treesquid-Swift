@@ -191,6 +191,6 @@ class BinaryTree<Key, Value>: GenericTree {
     }
     
     func insert(node: GenericNode) -> Any {
-        return Treesquid.insert(within: self, newNode: node)
+        return Treesquid.insert(within: self, newNode: node, maxDegree: 2)
     }
 }

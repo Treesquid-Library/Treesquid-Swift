@@ -1,6 +1,7 @@
 public enum NodeOperationError: Error {
     case indexOutOfBounds
     case childCapacityExceeded
+    case treeUnassigned
 }
 
 internal protocol GenericNode {
@@ -156,28 +157,38 @@ fileprivate func levels(levelStack: inout [[GenericNode]]) {
     return levels(levelStack: &levelStack)
 }
 
-internal func insert(within tree: GenericTree, newNode: GenericNode) -> GenericTree {
+internal func insert(within tree: GenericTree, newNode: GenericNode, maxDegree: UInt) -> GenericTree {
     if tree.isEmpty() {
         tree.setRoot(newNode)
         return tree
     }
-    return insert(within: tree, newNode: newNode, depth: 0, level: [tree.getRoot()!])
+    let root = tree.getRoot()!
+    return insert(within: tree,
+                  newNode: newNode,
+                  depth: 0,
+                  level: [root],
+                  maxDegree: maxDegree)
 }
     
-fileprivate func insert(within tree: GenericTree, newNode: GenericNode, depth: Int, level: [GenericNode]) -> GenericTree {
+fileprivate func insert(within tree: GenericTree, newNode: GenericNode, depth: Int, level: [GenericNode], maxDegree: UInt) -> GenericTree {
     var nextLevel: [GenericNode] = []
     for node in level {
         if node.degree() == 0 {
             try! node.append(child: newNode)
             return tree
         }
-        for childIndex in 0..<node.capacity() {
+        let capacity = node.capacity()
+        for childIndex in 0..<capacity {
             if node.child(at: childIndex) == nil {
                 node.replace(childAt: childIndex, with: newNode)
                 return tree
             }
             nextLevel.append(node.child(at: childIndex) as! GenericNode)
         }
+        if capacity < maxDegree {
+            try! node.append(child: newNode)
+            return tree
+        }
     }
-    return insert(within: tree, newNode: newNode, depth: depth + 1, level: nextLevel)
+    return insert(within: tree, newNode: newNode, depth: depth + 1, level: nextLevel, maxDegree: maxDegree)
 }
