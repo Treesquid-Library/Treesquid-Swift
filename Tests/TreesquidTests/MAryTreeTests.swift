@@ -11,6 +11,20 @@ final class MAryTreeTests: XCTestCase {
         .insert(node: MAryTreeNode(key: "lr3"))
         .insert(node: MAryTreeNode(key: "rl3"))
         .insert(node: MAryTreeNode(key: "rr3"))
+    static let treeTernaryTree = MAryTree<Int, Any>(m: 3)
+        .insert(node: MAryTreeNode(key: 100))
+        .insert(node: MAryTreeNode(key: 200))
+        .insert(node: MAryTreeNode(key: 201))
+        .insert(node: MAryTreeNode(key: 202))
+        .insert(node: MAryTreeNode(key: 300))
+        .insert(node: MAryTreeNode(key: 301))
+        .insert(node: MAryTreeNode(key: 302))
+        .insert(node: MAryTreeNode(key: 310))
+        .insert(node: MAryTreeNode(key: 311))
+        .insert(node: MAryTreeNode(key: 312))
+        .insert(node: MAryTreeNode(key: 320))
+        .insert(node: MAryTreeNode(key: 321))
+        .insert(node: MAryTreeNode(key: 322))
     
     func testEmptyTreeIsEmpty() {
         let emptyTree = MAryTree<Any, Any>(m: 1)
@@ -48,6 +62,31 @@ final class MAryTreeTests: XCTestCase {
             let expectedNumberOfNodes = Int(pow(2.0, Double(level)))
             XCTAssert(nodesInLevel == expectedNumberOfNodes,
                       "Level \(level + 1) has \(nodesInLevel) nodes. Expected: \(expectedNumberOfNodes)")
+        }
+    }
+    
+    // TODO: Make this test a generic function. Can be applied to
+    //       many trees -- not just m-ary trees.
+    func testTernaryTreeLevels() {
+        let levels = MAryTreeTests.treeTernaryTree.levels()
+        XCTAssert(levels.count == 3,
+                  "Number of levels is \(levels.count). Expected: 3")
+        for level in 0..<levels.count {
+            let nodesInLevel = levels[level].count
+            let expectedNumberOfNodes = Int(pow(3.0, Double(level)))
+            XCTAssert(nodesInLevel == expectedNumberOfNodes,
+                      "Level \(level + 1) has \(nodesInLevel) nodes. Expected: \(expectedNumberOfNodes)")
+            for nodeIndex in 0..<nodesInLevel {
+                let node = levels[level][nodeIndex]
+                let inLevelAddress = 10 * (nodeIndex / 3) + nodeIndex % 3
+                let expectedKey = (level + 1) * 100 + inLevelAddress
+                if node.key == nil {
+                    XCTFail("Node key is nil. Expected: \(expectedKey)")
+                    continue
+                }
+                XCTAssert(node.key! == expectedKey,
+                          "Node key is \(node.key!). Expected: \(expectedKey)")
+            }
         }
     }
 }
