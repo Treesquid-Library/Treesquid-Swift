@@ -11,7 +11,8 @@ final class MAryTreeTests: XCTestCase {
         .insert(node: MAryTreeNode(key: "lr3"))
         .insert(node: MAryTreeNode(key: "rl3"))
         .insert(node: MAryTreeNode(key: "rr3"))
-    static let treeTernaryTree = MAryTree<Int, Any>(m: 3)
+    static let treeTernaryTreeM: UInt = 3
+    static let treeTernaryTree = MAryTree<Int, Any>(m: treeTernaryTreeM)
         .insert(node: MAryTreeNode(key: 100))
         .insert(node: MAryTreeNode(key: 200))
         .insert(node: MAryTreeNode(key: 201))
@@ -65,20 +66,19 @@ final class MAryTreeTests: XCTestCase {
         }
     }
     
-    // TODO: Make this test a generic function. Can be applied to
-    //       many trees -- not just m-ary trees.
     func testTernaryTreeLevels() {
         let levels = MAryTreeTests.treeTernaryTree.levels()
         XCTAssert(levels.count == 3,
                   "Number of levels is \(levels.count). Expected: 3")
         for level in 0..<levels.count {
             let nodesInLevel = levels[level].count
-            let expectedNumberOfNodes = Int(pow(3.0, Double(level)))
+            let expectedNumberOfNodes = Int(pow(Double(MAryTreeTests.treeTernaryTreeM), Double(level)))
             XCTAssert(nodesInLevel == expectedNumberOfNodes,
                       "Level \(level + 1) has \(nodesInLevel) nodes. Expected: \(expectedNumberOfNodes)")
             for nodeIndex in 0..<nodesInLevel {
                 let node = levels[level][nodeIndex]
-                let inLevelAddress = 10 * (nodeIndex / 3) + nodeIndex % 3
+                let inLevelAddress = 10 * (nodeIndex / Int(MAryTreeTests.treeTernaryTreeM))
+                    + nodeIndex % Int(MAryTreeTests.treeTernaryTreeM)
                 let expectedKey = (level + 1) * 100 + inLevelAddress
                 if node.key == nil {
                     XCTFail("Node key is nil. Expected: \(expectedKey)")

@@ -3,18 +3,18 @@ import XCTest
 @testable import Treesquid
 
 final class GeneralTreeTests: XCTestCase {
-    static let treeTwoLevelsTreeInsert = GeneralTree<String, Any>()
-        .insert(node: GeneralTreeNode(key: "root1"))
-        .insert(node: GeneralTreeNode(key: "(0)2"))
-        .insert(node: GeneralTreeNode(key: "(0)(0)3"))
-        .insert(node: GeneralTreeNode(key: "(0)(0)(0)4"))
-        .insert(node: GeneralTreeNode(key: "(0)(0)(0)(0)5"))
-        .insert(node: GeneralTreeNode(key: "(0)(0)(0)(0)(0)6"))
-    static let treeTwoLevelsNodeInsert = GeneralTree<Int, Any>()
-        .insert(node: try! GeneralTreeNode(key: 0)
-                    .append(GeneralTreeNode(key: 1))
-                    .append(GeneralTreeNode(key: 2))
-                    .append(GeneralTreeNode(key: 3)))
+    static let treeTwoLevelsTreeInsert = GeneralTree<Int, Any>()
+        .insert(node: GeneralTreeNode(key: 100))
+        .insert(node: GeneralTreeNode(key: 200))
+        .insert(node: GeneralTreeNode(key: 201))
+        .insert(node: GeneralTreeNode(key: 202))
+        .insert(node: GeneralTreeNode(key: 203))
+        .insert(node: GeneralTreeNode(key: 204))
+    static let treeTwoLevelsNodeInsert = GeneralTree<String, Any>()
+        .insert(node: try! GeneralTreeNode(key: "n0")
+                    .append(GeneralTreeNode(key: "n1"))
+                    .append(GeneralTreeNode(key: "n2"))
+                    .append(GeneralTreeNode(key: "n3")))
     static let nodeDegree3Count3 =  try! GeneralTreeNode<String, Any>(key: "root")
         .append(GeneralTreeNode(key: "1"))
         .append(GeneralTreeNode(key: "2"))
@@ -62,6 +62,21 @@ final class GeneralTreeTests: XCTestCase {
             let numberOfNodes = levels[level].count
             XCTAssert(numberOfNodes == expectedNodes[level],
                       "Level \(level + 1) has \(numberOfNodes) nodes. Expected: \(expectedNodes[level])")
+            // Note: For general trees, this only works in this specific
+            //       case -- a general tree only having level 2 nodes. This
+            //       is fundamentally different from the binary and m-are
+            //       test cases.
+            for nodeIndex in 0..<numberOfNodes {
+                let node = levels[level][nodeIndex]
+                let inLevelAddress = 10 * (nodeIndex / numberOfNodes) + nodeIndex % numberOfNodes
+                let expectedKey = (level + 1) * 100 + inLevelAddress
+                if node.key == nil {
+                    XCTFail("Node key is nil. Expected: \(expectedKey)")
+                    continue
+                }
+                XCTAssert(node.key! == expectedKey,
+                          "Node key is \(node.key!). Expected: \(expectedKey)")
+            }
         }
     }
 
@@ -79,6 +94,23 @@ final class GeneralTreeTests: XCTestCase {
         let numberOfNodes = GeneralTreeTests.treeTwoLevelsNodeInsert.count()
         XCTAssert(numberOfNodes == 4,
                   "Tree has \(numberOfNodes) nodes. Expected: 4")
+    }
+    
+    func testTreeTwoLevelsNodeKeys() {
+        guard let rootNode = GeneralTreeTests.treeTwoLevelsNodeInsert.root else {
+            XCTFail("Root node is nil.")
+            return
+        }
+        XCTAssert(rootNode.key! == "n0",
+                  "Root node's key is \(rootNode.key!). Expected: n0")
+        for index in 0...1 {
+            XCTAssert(rootNode[index] != nil,
+                      "Child node at index \(index) is nil.")
+            let observedKey = rootNode[index]!.key!
+            let expectedKey = "n\(index + 1)"
+            XCTAssert(observedKey == expectedKey,
+                      "Child node at \(index) has a key of \(observedKey). Expected: \(expectedKey)")
+        }
     }
     
     func testTreeTwoLevelsNodeInsertLevels() {
