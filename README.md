@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./Sources/Treesquid/Resources/logo-square-240-240.png" width="120" />
+    <img src="./Sources/Treesquid/Resources/logo-wide-1200-240.png" width="600" />
 </p>
 
 # Treesquid
