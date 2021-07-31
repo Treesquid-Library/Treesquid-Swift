@@ -20,7 +20,12 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Treesquid",
-            dependencies: []),
+            dependencies: [],
+            exclude: [
+                "Resources/logo-square-240-240.png",
+                "Resources/logo-wide-1200-240.png",
+                "Treesquid.docc"
+            ]),
         .testTarget(
             name: "TreesquidTests",
             dependencies: ["Treesquid"]),
