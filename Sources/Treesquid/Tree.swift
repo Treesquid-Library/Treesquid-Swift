@@ -2,6 +2,8 @@ public enum NodeOperationError: Error {
     case indexOutOfBounds
     case childCapacityExceeded
     case treeUnassigned
+    case invalidTreeConfiguration
+    case immutable
 }
 
 internal protocol GenericNode {
@@ -9,7 +11,7 @@ internal protocol GenericNode {
     
     func degree() -> Int
     
-    func child(at index: Int) -> Any?
+    func child(at index: Int) -> GenericNode?
     
     func getChildren() -> [GenericNode?]
     
@@ -94,6 +96,45 @@ public protocol Tree {
 }
 
 //
+// Void node
+//
+internal class VoidNode: GenericNode {
+    private let arity: Int
+    
+    public init(degree: Int) {
+        self.arity = degree
+    }
+    
+    //
+    // GenericNode
+    //
+    
+    func capacity() -> Int {
+        return arity
+    }
+    
+    func degree() -> Int {
+        return arity
+    }
+    
+    func child(at index: Int) -> GenericNode? {
+        return nil
+    }
+    
+    func getChildren() -> [GenericNode?] {
+        return Array(repeating: nil, count: arity)
+    }
+    
+    func append(child: GenericNode) throws -> Any {
+        throw NodeOperationError.immutable
+    }
+    
+    func replace(childAt: Int, with node: GenericNode) -> Any {
+        return self
+    }
+}
+
+//
 // GenericNode
 //
 
@@ -112,14 +153,14 @@ internal func degree(of node: GenericNode) -> Int {
 internal func width(of tree: GenericTree) -> Int {
     guard let root = tree.getRoot() else { return 0 }
     var levelStack = [[root]]
-    levels(levelStack: &levelStack)
+    levels(levelStack: &levelStack, fillWithVoidNodes: false)
     return levelStack.map { $0.count }.max()!
 }
 
 internal func count(of tree: GenericTree) -> Int {
     guard let root = tree.getRoot() else { return 0 }
     var levelStack = [[root]]
-    levels(levelStack: &levelStack)
+    levels(levelStack: &levelStack, fillWithVoidNodes: false)
     // NOTE: This duplicates the space requirement.
     return levelStack.map { $0.count }.reduce(0, { x, y in x + y })
 }
@@ -136,25 +177,45 @@ fileprivate func depth(_ node: GenericNode?) -> Int {
 }
 
 internal func levels(of tree: GenericTree) -> [[GenericNode]] {
+    return levels(of: tree, fillWithVoidNodes: false)
+}
+
+internal func levels(of tree: GenericTree, fillWithVoidNodes: Bool) -> [[GenericNode]] {
     guard let root = tree.getRoot() else { return [] }
     var levelStack: [[GenericNode]] = [[root]]
-    levels(levelStack: &levelStack)
+    levels(levelStack: &levelStack, fillWithVoidNodes: fillWithVoidNodes)
     return levelStack
 }
 
-fileprivate func levels(levelStack: inout [[GenericNode]]) {
+fileprivate func levels(levelStack: inout [[GenericNode]], fillWithVoidNodes: Bool) {
     guard let deepestLevel = levelStack.last else { return }
     var nextLevel: [GenericNode] = []
-    for node in deepestLevel {
-        for child in node.getChildren() {
-            if child != nil {
-                nextLevel.append(child!)
+    if fillWithVoidNodes {
+        var allNodesAreVoid = true
+        for node in deepestLevel {
+            for childIndex in 0..<node.capacity() {
+                let child = node.child(at: childIndex)
+                if child != nil && !(child is VoidNode) {
+                    nextLevel.append(child!)
+                    allNodesAreVoid = false
+                } else {
+                    nextLevel.append(VoidNode(degree: node.capacity()))
+                }
             }
         }
+        if allNodesAreVoid { return }
+    } else {
+        for node in deepestLevel {
+            for child in node.getChildren() {
+                if child != nil {
+                    nextLevel.append(child!)
+                }
+            }
+        }
+        if nextLevel.isEmpty { return }
     }
-    if nextLevel.isEmpty { return }
     levelStack.append(nextLevel)
-    return levels(levelStack: &levelStack)
+    return levels(levelStack: &levelStack, fillWithVoidNodes: fillWithVoidNodes)
 }
 
 internal func insert(within tree: GenericTree, newNode: GenericNode, maxDegree: UInt) -> GenericTree {

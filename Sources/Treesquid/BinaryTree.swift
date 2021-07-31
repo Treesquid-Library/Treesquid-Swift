@@ -123,7 +123,7 @@ public class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNo
     // GenericNode functions
     //
     
-    func child(at index: Int) -> Any? {
+    func child(at index: Int) -> GenericNode? {
         return children[index]
     }
     

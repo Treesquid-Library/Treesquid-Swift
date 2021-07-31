@@ -71,7 +71,7 @@ public class DynamicTreeNode<Key, Value>: GenericNode {
     // GenericNode functions
     //
     
-    internal func child(at index: Int) -> Any? {
+    internal func child(at index: Int) -> GenericNode? {
         return children[index]
     }
     
