@@ -244,7 +244,7 @@ fileprivate func insert(within tree: GenericTree, newNode: GenericNode, depth: I
                 node.replace(childAt: childIndex, with: newNode)
                 return tree
             }
-            nextLevel.append(node.child(at: childIndex) as! GenericNode)
+            nextLevel.append(node.child(at: childIndex)!)
         }
         if capacity < maxDegree {
             try! node.append(child: newNode)
