@@ -63,7 +63,7 @@ public class GeneralTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, Traversab
     @discardableResult
     public func replace(childAt: Int, with node: GeneralTreeNode<Key, Value>) -> GeneralTreeNode<Key, Value> {
         node.parent = self
-        return replace(childAt: childAt, with: node)
+        return super.replace(childAt: childAt, with: node) as! GeneralTreeNode<Key, Value>
     }
 }
 

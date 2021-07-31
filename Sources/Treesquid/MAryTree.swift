@@ -80,7 +80,7 @@ public class MAryTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, TraversableN
     @discardableResult
     public func replace(childAt: Int, with node: MAryTreeNode<Key, Value>) -> MAryTreeNode<Key, Value> {
         node.parent = self
-        return replace(childAt: childAt, with: node)
+        return super.replace(childAt: childAt, with: node) as! MAryTreeNode<Key, Value>
     }
     
     internal func maxDegree() throws -> UInt {
