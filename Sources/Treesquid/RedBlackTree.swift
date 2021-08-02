@@ -120,7 +120,7 @@ public class RedBlackTreeNode<Key: Comparable, Value>: GenericNode {
         return indexIn(parent: parent!)
     }
     internal func indexIn(parent: Node) -> Int {
-        return parent.children[0] === self ? 1 : 0
+        return parent.children[0] === self ? 0 : 1
     }
 }
 
@@ -236,20 +236,21 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
     // Note: For `direction`, see the note on `RedBlackTreeNote` about
     //       why enumerations are not used.
     @discardableResult
-    func rotate(subtree: Node, direction: Int) throws -> Node {
-        guard let sibling = subtree.children[1 - direction] else {
+    func rotate(parent: Node, direction: Int) throws -> Node {
+        guard let sibling = parent.children[1 - direction] else {
             throw NodeOperationError.invalidTreeConfiguration
         }
+        let grandparent = parent.parent
         let closeNephew = sibling.children[direction]
-        subtree.children[1 - direction] = closeNephew
+        parent.children[1 - direction] = closeNephew
         if closeNephew != nil {
-            closeNephew!.parent = subtree
+            closeNephew!.parent = parent
         }
-        sibling.children[direction] = subtree
-        subtree.parent = sibling
-        sibling.parent = subtree.parent
-        if subtree.parent != nil {
-            subtree.parent!.children[subtree === subtree.parent!.children[1] ? 1 : 0] = sibling
+        sibling.children[direction] = parent
+        parent.parent = sibling
+        sibling.parent = grandparent
+        if grandparent != nil {
+            grandparent!.children[parent === grandparent!.children[1] ? 1 : 0] = sibling
         } else {
             root = sibling
         }
@@ -272,6 +273,7 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
         repeat {
             // Case 1:
             if !iterativeParent!.red {
+                // Parent is black, new node is red. All done!
                 return
             }
             grandparent = iterativeParent!.parent
@@ -292,24 +294,26 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
             node = grandparent!
             iterativeParent = node.parent
         } while(iterativeParent != nil)
-        // Case 3:
+        // Case 3: Parent is nil.
         if nextCase == RedBlackTree.InsertCases.three {
             return
         }
-        // Case 4:
+        // Case 4: Parent is root and red.
         if nextCase == RedBlackTree.InsertCases.four {
             iterativeParent!.red = false
             return
         }
+        // Parent is red and uncle is black.
         if nextCase == RedBlackTree.InsertCases.fiveSix {
             // Case 5:
             if node === iterativeParent!.children[1 - direction] {
-                try rotate(subtree: iterativeParent!, direction: direction)
+                try rotate(parent: iterativeParent!, direction: direction)
                 node = iterativeParent!
-                iterativeParent = grandparent?.children[direction]
+                iterativeParent = grandparent!.children[direction]
             }
-            // Case 6:
-            try rotate(subtree: grandparent!, direction: 1 - direction)
+            // Case 6: Parent is red, uncle is black, and nephew is an
+            //         outter grandchild of the grandparent.
+            try rotate(parent: grandparent!, direction: 1 - direction)
             iterativeParent!.red = false
             grandparent!.red = true
         }
