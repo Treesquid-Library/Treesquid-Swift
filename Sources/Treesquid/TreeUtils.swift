@@ -1,10 +1,10 @@
 import Foundation
 
-public func traverse(tree: RedBlackTree<Int, Any>) {
+public func traverse(tree: RedBlackTree<Int, Any>) -> String {
     if tree.isEmpty() {
-        print("empty tree")
-        return
+        return "" // Empty tree is empty!
     }
+    var treeUnicodeArt = ""
     let detailsWidth = 3 // Note: Does not include separating space.
     let indentWidth = detailsWidth + 1 // Number of spaces to indent every line.
     let depth = tree.depth()
@@ -12,26 +12,30 @@ public func traverse(tree: RedBlackTree<Int, Any>) {
     let levelStack = levels(of: tree, fillWithVoidNodes: true)
     for levelIndex in 0..<levelStack.count {
         let maxNodesInLevel = pow(2.0, Double(levelIndex))
-        print(String(repeating: " ", count: indentWidth), terminator: "")
-        print(String(repeating: " ",
-                     count: Int(Double(detailsWidth + 1) / 2.0 * (maxNodesAtBottom - maxNodesInLevel))), terminator: "")
+        treeUnicodeArt += String(repeating: " ", count: indentWidth)
+        treeUnicodeArt += String(repeating: " ",
+                                 count: Int(Double(detailsWidth + 1) / 2.0 * (maxNodesAtBottom - maxNodesInLevel)))
         for nodeIndex in 0..<Int(maxNodesInLevel) {
+            let needsSpaceSuffix = nodeIndex + 1 < Int(maxNodesInLevel) ? true : false
             if levelIndex > 0 {
                 let node = levelStack[levelIndex][nodeIndex]
                 if node is VoidNode {
-                    print(String(repeating: "-", count: detailsWidth) + " ", terminator: "")
+                    treeUnicodeArt += String(repeating: "-", count: detailsWidth) + " "
                 } else {
-                    details(node: node as! RedBlackTreeNode<Int, Any>)
+                    treeUnicodeArt += details(node: node as! RedBlackTreeNode<Int, Any>, appendSpace: needsSpaceSuffix)
                 }
             } else {
-                details(node: levelStack[levelIndex][nodeIndex] as! RedBlackTreeNode<Int, Any>)
+                treeUnicodeArt += details(node: levelStack[levelIndex][nodeIndex] as! RedBlackTreeNode<Int, Any>, appendSpace: needsSpaceSuffix)
             }
         }
-        print("")
+        if levelIndex + 1 < levelStack.count {
+            treeUnicodeArt += "\n"
+        }
     }
+    return treeUnicodeArt
 }
 
-func details(node: RedBlackTreeNode<Int, Any>) {
+func details(node: RedBlackTreeNode<Int, Any>, appendSpace: Bool) -> String {
     let color = node.red ? "◻︎" : "◼︎"
-    print("\(String(format: "%02d", node.key))\(color)", terminator: " ")
+    return "\(String(format: "%02d", node.key))\(color)" + (appendSpace ? " " : "")
 }
