@@ -20,7 +20,8 @@ public func traverse(tree: RedBlackTree<Int, Any>) -> String {
             if levelIndex > 0 {
                 let node = levelStack[levelIndex][nodeIndex]
                 if node is VoidNode {
-                    treeUnicodeArt += String(repeating: "-", count: detailsWidth) + " "
+                    treeUnicodeArt += String(repeating: "-", count: detailsWidth)
+                        + (needsSpaceSuffix ? " " : "")
                 } else {
                     treeUnicodeArt += details(node: node as! RedBlackTreeNode<Int, Any>, appendSpace: needsSpaceSuffix)
                 }
