@@ -119,6 +119,7 @@ public class RedBlackTreeNode<Key: Comparable, Value>: GenericNode {
     internal func indexInParent() -> Int {
         return indexIn(parent: parent!)
     }
+    
     internal func indexIn(parent: Node) -> Int {
         return parent.children[0] === self ? 0 : 1
     }
