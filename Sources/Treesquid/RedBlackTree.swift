@@ -234,6 +234,15 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
         return (nil, -1)
     }
     
+    // Finds in-order predecessor or in-order successor.
+    func findInOrderNodeForDelete(node: Node, direction: Int) -> Node {
+        var traversalNode = node;
+        while node.children[1 - direction] != nil {
+            traversalNode = traversalNode.children[1 - direction]!
+        }
+        return traversalNode
+    }
+    
     // Note: For `direction`, see the note on `RedBlackTreeNote` about
     //       why enumerations are not used.
     @discardableResult
