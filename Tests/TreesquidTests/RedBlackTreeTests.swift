@@ -19,6 +19,28 @@ final class RedBlackTreeTests: XCTestCase {
     func validate(tree: RedBlackTree<Int, Any>, is reference: String) {
         XCTAssert(traverse(tree: tree) == reference, "Trees differ. Expected:\n\(reference)")
     }
+
+    private func traverseAndCountBlackNodes(node: RedBlackTreeNode<Int, Any>?, seenBlackNodes: Int, blackNodesOnPaths: inout [Int]) {
+        var seenBlackNodes = seenBlackNodes
+        if node == nil || !node!.red {
+            seenBlackNodes += 1
+            if node == nil {
+                blackNodesOnPaths.append(seenBlackNodes)
+                return
+            }
+        }
+        traverseAndCountBlackNodes(node: node!.children[0], seenBlackNodes: seenBlackNodes, blackNodesOnPaths: &blackNodesOnPaths)
+        traverseAndCountBlackNodes(node: node!.children[1], seenBlackNodes: seenBlackNodes, blackNodesOnPaths: &blackNodesOnPaths)
+    }
+    
+    func hasRedBlackTreeProperties(tree: RedBlackTree<Int, Any>) -> Bool {
+        guard let root = tree.root else { return true }
+        var blackNodesRootToNilNodes: [Int] = []
+        traverseAndCountBlackNodes(node: root, seenBlackNodes: 0, blackNodesOnPaths: &blackNodesRootToNilNodes)
+        if blackNodesRootToNilNodes.count == 0 { return true }
+        let sample = blackNodesRootToNilNodes.first
+        return blackNodesRootToNilNodes.filter { $0 != sample }.count == 0
+    }
     
     // Example from:
     // https://60devs.com/a/data-structures/red-black-tree/
