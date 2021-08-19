@@ -172,6 +172,63 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
         return self
     }
     
+    // Removes the node with the matching key. If no node with a matching
+    // key is found, then the tree is not being altered.
+    @discardableResult
+    func delete(key: Key) -> Tree {
+        guard let root = root else { return self }
+        // Removal of a root node without children.
+        if root.children[0] == nil && root.children[1] == nil {
+            if root.key == key {
+                self.root = nil
+            }
+            return self
+        }
+        // Find the node:
+        guard let node = find(key: key) else { return self }
+        let hasLeftChild = node.children[0] != nil
+        let hasRightChild = node.children[1] != nil
+        // Replacement with max/min element in left/right sub-tree.
+        if hasLeftChild && hasRightChild {
+            let inOrderPredecessor = findInOrderNodeForDelete(node: node.children[0]!, direction: 0)
+            node.parent?.children[node.indexInParent()] = inOrderPredecessor
+            if node.children[0] !== inOrderPredecessor {
+                let predecessorParent = inOrderPredecessor.parent
+                let predecessorChild = inOrderPredecessor.children[0]
+                inOrderPredecessor.children[0] = node.children[0]
+                node.children[0]!.parent = inOrderPredecessor
+                predecessorParent!.children[1] = predecessorChild
+            }
+            inOrderPredecessor.children[1] = node.children[1]
+            inOrderPredecessor.parent = node.parent
+            return self
+        }
+        // Node with one child only, which must be red by implication.
+        if hasLeftChild && !hasRightChild || !hasLeftChild && hasRightChild {
+            let onlyChild = node.children[hasLeftChild ? 0 : 1]!
+            onlyChild.parent = node.parent
+            node.parent?.children[node.indexInParent()] = onlyChild
+            return self
+        }
+        // Red node with no children.
+        if !hasLeftChild && !hasRightChild {
+            node.parent?.children[node.indexInParent()] = nil
+            return self
+        }
+        // Black node and single child is red.
+        if !node.red && (hasLeftChild && !hasRightChild || !hasLeftChild && hasRightChild) {
+            let onlyChild = node.children[hasLeftChild ? 0 : 1]!
+            if onlyChild.red {
+                node.parent?.children[node.indexInParent()] = onlyChild
+                onlyChild.red = false
+                return self
+            }
+            // else: fall through!
+        }
+        // TODO: Complex case handling.
+        return self
+    }
+    
     func levels() -> [[Node]] {
         return Treesquid.levels(of: self) as! [[Node]]
     }

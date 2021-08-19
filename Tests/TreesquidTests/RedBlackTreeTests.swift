@@ -16,6 +16,13 @@ final class RedBlackTreeTests: XCTestCase {
         .insert(node: RedBlackTreeNode(key: 40))
         .insert(node: RedBlackTreeNode(key: 80))
 
+    //
+    // Trees for testing deletions:
+    //
+    
+    static let treeSingleRootNode = RedBlackTree<Int, Any>()
+        .insert(node: RedBlackTreeNode(key: 5))
+    
     func validate(tree: RedBlackTree<Int, Any>, is reference: String) {
         XCTAssert(traverse(tree: tree) == reference, "Trees differ. Expected:\n\(reference)")
     }
@@ -257,5 +264,10 @@ final class RedBlackTreeTests: XCTestCase {
             --- --- 04◼︎ 07◼︎
     --- --- --- --- 03◻︎ --- 06◻︎ 09◻︎
 """)
+    }
+    
+    func testSingleRootNodeDeletion() {
+        RedBlackTreeTests.treeSingleRootNode.delete(key: 5)
+        XCTAssert(RedBlackTreeTests.treeSingleRootNode.isEmpty() == true, "Tree is not empty.")
     }
 }
