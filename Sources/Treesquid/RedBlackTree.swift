@@ -135,6 +135,14 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
         case fiveSix
     }
     
+    private enum DeleteCases {
+        case two
+        case three
+        case four
+        case five
+        case six
+    }
+    
     var root: Node?
     
     func isEmpty() -> Bool {
@@ -225,7 +233,8 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
             }
             // else: fall through!
         }
-        // TODO: Complex case handling.
+        // Node is not the root, it is black, and has no children.
+        
         return self
     }
     
@@ -384,5 +393,92 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
             iterativeParent!.red = false
             grandparent!.red = true
         }
+    }
+    
+    func delete(node deleteNode: Node) throws -> Tree {
+        var node = deleteNode
+        guard let parent = node.parent else { return self } // Invalid configuration.
+        var direction = node.indexInParent()
+        parent.children[direction] = nil
+        var iterativeParent: Node? = parent
+        var iterativeSibling: Node? = nil
+        var iterativeCloseNephew: Node? = nil
+        var iterativeDistantNephew: Node? = nil
+        var skip = true
+        var nextCase = RedBlackTree.DeleteCases.two
+        repeat {
+            if !skip {
+                direction = node.indexInParent()
+            }
+            skip = false
+            iterativeSibling = iterativeParent?.children[1 - direction]
+            if iterativeSibling != nil && iterativeSibling!.red {
+                nextCase = RedBlackTree.DeleteCases.three
+                break;
+            }
+            iterativeDistantNephew = iterativeSibling?.children[1 - direction]
+            if iterativeDistantNephew != nil && iterativeDistantNephew!.red {
+                nextCase = RedBlackTree.DeleteCases.six
+                break;
+            }
+            iterativeCloseNephew = iterativeSibling?.children[direction]
+            if iterativeCloseNephew != nil && iterativeCloseNephew!.red {
+                nextCase = RedBlackTree.DeleteCases.five
+                break;
+            }
+            if iterativeParent!.red {
+                nextCase = RedBlackTree.DeleteCases.four
+                break;
+            }
+            // Parent, sibling, and both nephews are black.
+            iterativeSibling!.red = true
+            node = iterativeParent!
+            iterativeParent = node.parent
+        } while(iterativeParent != nil)
+        // Case 2: Current node is the new root.
+        if nextCase == RedBlackTree.DeleteCases.two {
+            return self
+        }
+        // Case 3: Red sibling, but parent and nephews are black.
+        if nextCase == RedBlackTree.DeleteCases.three {
+            try rotate(parent: iterativeParent!, direction: direction)
+            iterativeParent!.red = true
+            iterativeSibling!.red = false
+            iterativeSibling = iterativeCloseNephew
+            iterativeDistantNephew = iterativeSibling!.children[1 - direction]
+            if iterativeDistantNephew != nil && iterativeDistantNephew!.red {
+                nextCase = RedBlackTree.DeleteCases.six
+            } else {
+                iterativeCloseNephew = iterativeSibling!.children[direction]
+                if iterativeCloseNephew != nil && iterativeCloseNephew!.red {
+                    nextCase = RedBlackTree.DeleteCases.five
+                } else {
+                    nextCase = RedBlackTree.DeleteCases.four
+                }
+            }
+        }
+        // Case 4: Parent red, but sibling and both nephews are black.
+        if nextCase == RedBlackTree.DeleteCases.four {
+            iterativeSibling!.red = true
+            iterativeParent!.red = false
+            return self
+        }
+        // Case 5: Close nephew is red, but sibling and distant nephew are black.
+        if nextCase == RedBlackTree.DeleteCases.five {
+            try rotate(parent: iterativeSibling!, direction: 1 - direction)
+            iterativeSibling!.red = true
+            iterativeCloseNephew!.red = false
+            iterativeDistantNephew = iterativeSibling
+            iterativeSibling = iterativeCloseNephew
+            nextCase = RedBlackTree.DeleteCases.six
+        }
+        // Case 6: Distant nephew is red and sibling is black.
+        if nextCase == RedBlackTree.DeleteCases.six {
+            try rotate(parent: iterativeParent!, direction: direction)
+            iterativeSibling!.red = iterativeParent!.red
+            iterativeParent!.red = false
+            iterativeDistantNephew!.red = false
+        }
+        return self
     }
 }

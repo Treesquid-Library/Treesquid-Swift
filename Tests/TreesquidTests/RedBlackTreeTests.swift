@@ -19,10 +19,7 @@ final class RedBlackTreeTests: XCTestCase {
     //
     // Trees for testing deletions:
     //
-    
-    static let treeSingleRootNode = RedBlackTree<Int, Any>()
-        .insert(node: RedBlackTreeNode(key: 5))
-    
+        
     func validate(tree: RedBlackTree<Int, Any>, is reference: String) {
         XCTAssert(traverse(tree: tree) == reference, "Trees differ. Expected:\n\(reference)")
     }
@@ -267,7 +264,50 @@ final class RedBlackTreeTests: XCTestCase {
     }
     
     func testSingleRootNodeDeletion() {
-        RedBlackTreeTests.treeSingleRootNode.delete(key: 5)
-        XCTAssert(RedBlackTreeTests.treeSingleRootNode.isEmpty() == true, "Tree is not empty.")
+        let treeSingleRootNode = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 5))
+        treeSingleRootNode.delete(key: 5)
+        XCTAssert(treeSingleRootNode.isEmpty() == true, "Tree is not empty.")
+    }
+    
+    // Example from:
+    // https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
+    func testRedLeafDeletion() {
+        let treeRedLeaf = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 30))
+            .insert(node: RedBlackTreeNode(key: 20))
+            .insert(node: RedBlackTreeNode(key: 40))
+            .insert(node: RedBlackTreeNode(key: 10))
+        validate(tree: treeRedLeaf, is: """
+          30◻︎
+        20◼︎ 40◼︎
+    10◻︎ --- --- ---
+""")
+        treeRedLeaf.delete(key: 10)
+        validate(tree: treeRedLeaf, is: """
+      30◻︎
+    20◼︎ 40◼︎
+""")
+    }
+    
+    // Example from:
+    // https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
+    func testBlackLeafDeletion() {
+        let treeRedLeaf = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 30))
+            .insert(node: RedBlackTreeNode(key: 20))
+            .insert(node: RedBlackTreeNode(key: 40))
+            .insert(node: RedBlackTreeNode(key: 50))
+        validate(tree: treeRedLeaf, is: """
+          30◻︎
+        20◼︎ 40◼︎
+    --- --- --- 50◻︎
+""")
+        treeRedLeaf.delete(key: 20)
+        validate(tree: treeRedLeaf, is: """
+          30◻︎
+        --- 40◼︎
+    --- --- --- 50◻︎
+""")
     }
 }
