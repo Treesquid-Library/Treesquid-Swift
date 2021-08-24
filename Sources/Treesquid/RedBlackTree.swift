@@ -219,7 +219,7 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
             return self
         }
         // Red node with no children.
-        if !hasLeftChild && !hasRightChild {
+        if node.red && !hasLeftChild && !hasRightChild {
             node.parent?.children[node.indexInParent()] = nil
             return self
         }
@@ -234,7 +234,12 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
             // else: fall through!
         }
         // Node is not the root, it is black, and has no children.
-        
+        do {
+            return try delete(node: node)
+        }
+        catch {
+            // TODO
+        }
         return self
     }
     

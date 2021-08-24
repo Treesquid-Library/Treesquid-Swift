@@ -304,10 +304,32 @@ final class RedBlackTreeTests: XCTestCase {
     --- --- --- 50◻︎
 """)
         treeRedLeaf.delete(key: 20)
+        print(traverse(tree: treeRedLeaf))
         validate(tree: treeRedLeaf, is: """
+      40◻︎
+    30◼︎ 50◼︎
+""")
+    }
+    
+    // Example from:
+    // https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
+    func testBlackSiblingWithRedChildDeletion() {
+        let treeSibling = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 30))
+            .insert(node: RedBlackTreeNode(key: 20))
+            .insert(node: RedBlackTreeNode(key: 40))
+            .insert(node: RedBlackTreeNode(key: 35))
+            .insert(node: RedBlackTreeNode(key: 50))
+        validate(tree: treeSibling, is: """
           30◻︎
-        --- 40◼︎
-    --- --- --- 50◻︎
+        20◼︎ 40◼︎
+    --- --- 35◻︎ 50◻︎
+""")
+        treeSibling.delete(key: 20)
+        validate(tree: treeSibling, is: """
+          40◻︎
+        30◼︎ 50◼︎
+    --- 35◻︎ --- ---
 """)
     }
 }
