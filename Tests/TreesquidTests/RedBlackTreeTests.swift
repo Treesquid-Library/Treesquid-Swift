@@ -272,6 +272,7 @@ final class RedBlackTreeTests: XCTestCase {
     
     // Example from:
     // https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
+    // (August 24th, 2021)
     func testRedLeafDeletion() {
         let treeRedLeaf = RedBlackTree<Int, Any>()
             .insert(node: RedBlackTreeNode(key: 30))
@@ -292,6 +293,7 @@ final class RedBlackTreeTests: XCTestCase {
     
     // Example from:
     // https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
+    // (August 24th, 2021)
     func testBlackLeafDeletion() {
         let treeRedLeaf = RedBlackTree<Int, Any>()
             .insert(node: RedBlackTreeNode(key: 30))
@@ -313,6 +315,7 @@ final class RedBlackTreeTests: XCTestCase {
     
     // Example from:
     // https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
+    // (August 24th, 2021)
     func testBlackSiblingWithRedChildDeletion() {
         let treeSibling = RedBlackTree<Int, Any>()
             .insert(node: RedBlackTreeNode(key: 30))
