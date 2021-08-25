@@ -211,13 +211,6 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
             inOrderPredecessor.parent = node.parent
             return self
         }
-        // Node with one child only, which must be red by implication.
-        if hasLeftChild && !hasRightChild || !hasLeftChild && hasRightChild {
-            let onlyChild = node.children[hasLeftChild ? 0 : 1]!
-            onlyChild.parent = node.parent
-            node.parent?.children[node.indexInParent()] = onlyChild
-            return self
-        }
         // Red node with no children.
         if node.red && !hasLeftChild && !hasRightChild {
             node.parent?.children[node.indexInParent()] = nil
@@ -417,16 +410,17 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
             }
             skip = false
             iterativeSibling = iterativeParent?.children[1 - direction]
+            // Moved up to make case 3 work.
+            iterativeDistantNephew = iterativeSibling?.children[1 - direction]
+            iterativeCloseNephew = iterativeSibling?.children[direction]
             if iterativeSibling != nil && iterativeSibling!.red {
                 nextCase = RedBlackTree.DeleteCases.three
                 break;
             }
-            iterativeDistantNephew = iterativeSibling?.children[1 - direction]
             if iterativeDistantNephew != nil && iterativeDistantNephew!.red {
                 nextCase = RedBlackTree.DeleteCases.six
                 break;
             }
-            iterativeCloseNephew = iterativeSibling?.children[direction]
             if iterativeCloseNephew != nil && iterativeCloseNephew!.red {
                 nextCase = RedBlackTree.DeleteCases.five
                 break;

@@ -306,7 +306,6 @@ final class RedBlackTreeTests: XCTestCase {
     --- --- --- 50◻︎
 """)
         treeRedLeaf.delete(key: 20)
-        print(traverse(tree: treeRedLeaf))
         validate(tree: treeRedLeaf, is: """
       40◻︎
     30◼︎ 50◼︎
@@ -333,6 +332,86 @@ final class RedBlackTreeTests: XCTestCase {
           40◻︎
         30◼︎ 50◼︎
     --- 35◻︎ --- ---
+""")
+    }
+    
+    // Example from:
+    // https://www.csee.umbc.edu/courses/undergraduate/341/spring04/Lectures/RedBlack/redblack.pdf
+    // (August 24th, 2021)
+    func testUMBCTreeBottomUpDeletionExample1() {
+        let treeUMBCTreeExample1 = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 65))
+            .insert(node: RedBlackTreeNode(key: 50))
+            .insert(node: RedBlackTreeNode(key: 80))
+            .insert(node: RedBlackTreeNode(key: 10))
+            .insert(node: RedBlackTreeNode(key: 60))
+            .insert(node: RedBlackTreeNode(key: 70))
+            .insert(node: RedBlackTreeNode(key: 90))
+            .insert(node: RedBlackTreeNode(key: 62))
+        validate(tree: treeUMBCTreeExample1, is: """
+                  65◼︎
+                50◻︎ 80◼︎
+            10◼︎ 60◼︎ 70◻︎ 90◻︎
+    --- --- --- 62◻︎ --- --- --- ---
+""")
+        treeUMBCTreeExample1.delete(key: 90)
+        validate(tree: treeUMBCTreeExample1, is: """
+                  65◼︎
+                50◻︎ 80◼︎
+            10◼︎ 60◼︎ 70◻︎ ---
+    --- --- --- 62◻︎ --- --- --- ---
+""")
+    }
+    
+    // Example from:
+    // https://www.csee.umbc.edu/courses/undergraduate/341/spring04/Lectures/RedBlack/redblack.pdf
+    // (August 24th, 2021)
+    func testUMBCTreeBottomUpDeletionExample2() {
+        let treeUMBCTreeExample2 = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 65))
+            .insert(node: RedBlackTreeNode(key: 50))
+            .insert(node: RedBlackTreeNode(key: 80))
+            .insert(node: RedBlackTreeNode(key: 10))
+            .insert(node: RedBlackTreeNode(key: 60))
+            .insert(node: RedBlackTreeNode(key: 70))
+            .insert(node: RedBlackTreeNode(key: 62))
+        validate(tree: treeUMBCTreeExample2, is: """
+                  65◼︎
+                50◻︎ 80◼︎
+            10◼︎ 60◼︎ 70◻︎ ---
+    --- --- --- 62◻︎ --- --- --- ---
+""")
+        treeUMBCTreeExample2.delete(key: 80)
+        validate(tree: treeUMBCTreeExample2, is: """
+                  65◼︎
+                50◻︎ 70◼︎
+            10◼︎ 60◼︎ --- ---
+    --- --- --- 62◻︎ --- --- --- ---
+""")
+    }
+    
+    // Example from:
+    // https://www.csee.umbc.edu/courses/undergraduate/341/spring04/Lectures/RedBlack/redblack.pdf
+    // (August 24th, 2021)
+    func testUMBCTreeBottomUpDeletionExample3() {
+        let treeUMBCTreeExample3 = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 65))
+            .insert(node: RedBlackTreeNode(key: 50))
+            .insert(node: RedBlackTreeNode(key: 70))
+            .insert(node: RedBlackTreeNode(key: 10))
+            .insert(node: RedBlackTreeNode(key: 60))
+            .insert(node: RedBlackTreeNode(key: 62))
+        validate(tree: treeUMBCTreeExample3, is: """
+                  65◼︎
+                50◻︎ 70◼︎
+            10◼︎ 60◼︎ --- ---
+    --- --- --- 62◻︎ --- --- --- ---
+""")
+        treeUMBCTreeExample3.delete(key: 70)
+        validate(tree: treeUMBCTreeExample3, is: """
+          50◼︎
+        10◼︎ 62◻︎
+    --- --- 60◼︎ 65◼︎
 """)
     }
 }
