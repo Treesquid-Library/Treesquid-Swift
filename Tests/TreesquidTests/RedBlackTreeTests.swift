@@ -414,4 +414,29 @@ final class RedBlackTreeTests: XCTestCase {
     --- --- 60◼︎ 65◼︎
 """)
     }
+    
+    // Example from:
+    // https://www.programiz.com/dsa/deletion-from-a-red-black-tree
+    // (August 25th, 2021)
+    func testProgramizTreeDeletion() {
+        let treeProgramizTree = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 55))
+            .insert(node: RedBlackTreeNode(key: 40))
+            .insert(node: RedBlackTreeNode(key: 65))
+            .insert(node: RedBlackTreeNode(key: 60))
+            .insert(node: RedBlackTreeNode(key: 75))
+            .insert(node: RedBlackTreeNode(key: 57))
+        validate(tree: treeProgramizTree, is: """
+                  55◼︎
+                40◼︎ 65◻︎
+            --- --- 60◼︎ 75◼︎
+    --- --- --- --- 57◻︎ --- --- ---
+""")
+        treeProgramizTree.delete(key: 40)
+        validate(tree: treeProgramizTree, is: """
+          65◼︎
+        57◻︎ 75◼︎
+    55◼︎ 60◼︎ --- ---
+""")
+    }
 }
