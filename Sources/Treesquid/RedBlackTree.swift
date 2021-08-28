@@ -207,6 +207,7 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
                 node.children[0]!.parent = inOrderPredecessor
                 predecessorParent!.children[1] = predecessorChild
             }
+            node.children[1]?.parent = inOrderPredecessor
             inOrderPredecessor.children[1] = node.children[1]
             inOrderPredecessor.parent = node.parent
             return self
