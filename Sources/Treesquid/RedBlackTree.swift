@@ -302,7 +302,7 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
     // Finds in-order predecessor or in-order successor.
     func findInOrderNodeForDelete(node: Node, direction: Int) -> Node {
         var traversalNode = node;
-        while node.children[1 - direction] != nil {
+        while traversalNode.children[1 - direction] != nil {
             traversalNode = traversalNode.children[1 - direction]!
         }
         return traversalNode
