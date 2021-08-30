@@ -44,8 +44,8 @@ public class RedBlackTreeNode<Key: Comparable, Value>: GenericNode {
         }
     }
     internal lazy var children: [Node?] = [ nil, nil ]
-    private(set) public var key: Key
-    private(set) public var value: Value?
+    internal(set) public var key: Key
+    internal(set) public var value: Value?
     
     internal convenience init(key: Key) {
         self.init(red: true, key: key, value: nil)
@@ -194,47 +194,7 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
         }
         // Find the node:
         guard let node = find(key: key) else { return self }
-        let hasLeftChild = node.children[0] != nil
-        let hasRightChild = node.children[1] != nil
-        // Replacement with max/min element in left/right sub-tree.
-        if hasLeftChild && hasRightChild {
-            let inOrderPredecessor = findInOrderNodeForDelete(node: node.children[0]!, direction: 0)
-            node.parent?.children[node.indexInParent()] = inOrderPredecessor
-            if node.children[0] !== inOrderPredecessor {
-                let predecessorParent = inOrderPredecessor.parent
-                let predecessorChild = inOrderPredecessor.children[0]
-                inOrderPredecessor.children[0] = node.children[0]
-                node.children[0]!.parent = inOrderPredecessor
-                predecessorParent!.children[1] = predecessorChild
-            }
-            node.children[1]?.parent = inOrderPredecessor
-            inOrderPredecessor.children[1] = node.children[1]
-            inOrderPredecessor.parent = node.parent
-            return self
-        }
-        // Red node with no children.
-        if node.red && !hasLeftChild && !hasRightChild {
-            node.parent?.children[node.indexInParent()] = nil
-            return self
-        }
-        // Black node and single child is red.
-        if !node.red && (hasLeftChild && !hasRightChild || !hasLeftChild && hasRightChild) {
-            let onlyChild = node.children[hasLeftChild ? 0 : 1]!
-            if onlyChild.red {
-                node.parent?.children[node.indexInParent()] = onlyChild
-                onlyChild.red = false
-                return self
-            }
-            // else: fall through!
-        }
-        // Node is not the root, it is black, and has no children.
-        do {
-            return try delete(node: node)
-        }
-        catch {
-            // TODO
-        }
-        return self
+        return delete(node: node)
     }
     
     func levels() -> [[Node]] {
@@ -394,7 +354,49 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
         }
     }
     
-    func delete(node deleteNode: Node) throws -> Tree {
+    @discardableResult
+    func delete(node: Node) -> Tree {
+        let hasLeftChild = node.children[0] != nil
+        let hasRightChild = node.children[1] != nil
+        // Replacement with max/min element in left/right sub-tree.
+        if hasLeftChild && hasRightChild {
+            let inOrderDirection = 1
+            let inOrderNode = findInOrderNodeForDelete(node: node.children[inOrderDirection]!, direction: inOrderDirection)
+            let nodeKey = node.key
+            let nodeValue = node.value
+            node.key = inOrderNode.key
+            node.value = inOrderNode.value
+            inOrderNode.key = nodeKey
+            inOrderNode.value = nodeValue
+            return delete(node: inOrderNode)
+        }
+        // Red node with no children.
+        if node.red && !hasLeftChild && !hasRightChild {
+            node.parent?.children[node.indexInParent()] = nil
+            return self
+        }
+        // Black node and single child is red.
+        if !node.red && (hasLeftChild && !hasRightChild || !hasLeftChild && hasRightChild) {
+            let onlyChild = node.children[hasLeftChild ? 0 : 1]!
+            if onlyChild.red {
+                node.parent?.children[node.indexInParent()] = onlyChild
+                onlyChild.parent = node.parent
+                onlyChild.red = false
+                return self
+            }
+            // else: fall through!
+        }
+        // Node is not the root, it is black, and has no children.
+        do {
+            return try deleteLeaf(node: node)
+        }
+        catch {
+            // TODO
+        }
+        return self
+    }
+    
+    func deleteLeaf(node deleteNode: Node) throws -> Tree {
         var node = deleteNode
         guard let parent = node.parent else { return self } // Invalid configuration.
         var direction = node.indexInParent()
