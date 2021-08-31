@@ -439,4 +439,80 @@ final class RedBlackTreeTests: XCTestCase {
     55◼︎ 60◼︎ --- ---
 """)
     }
+    
+    // Example from:
+    // http://ion.uwinnipeg.ca/~ychen2/advancedAD/Red-black%20Tree.pdf
+    // (August 25th, 2021)
+    func testUWinnipegYChen2TreeDeletion() {
+        let treeUWinnipeg = RedBlackTree<Int, Any>()
+            .insert(node: RedBlackTreeNode(key: 1))
+            .insert(node: RedBlackTreeNode(key: 11))
+            .insert(node: RedBlackTreeNode(key: 12))
+            .insert(node: RedBlackTreeNode(key: 69))
+            .insert(node: RedBlackTreeNode(key: 4))
+            .insert(node: RedBlackTreeNode(key: 14))
+            .insert(node: RedBlackTreeNode(key: 82))
+            .insert(node: RedBlackTreeNode(key: 50))
+            .insert(node: RedBlackTreeNode(key: 77))
+            .insert(node: RedBlackTreeNode(key: 3))
+        validate(tree: treeUWinnipeg, is: """
+                  14◼︎
+                11◻︎ 69◻︎
+            03◼︎ 12◼︎ 50◼︎ 82◼︎
+    01◻︎ 04◻︎ --- --- --- --- 77◻︎ ---
+""")
+        treeUWinnipeg.delete(key: 1)
+        validate(tree: treeUWinnipeg, is: """
+                  14◼︎
+                11◻︎ 69◻︎
+            03◼︎ 12◼︎ 50◼︎ 82◼︎
+    --- 04◻︎ --- --- --- --- 77◻︎ ---
+""")
+        treeUWinnipeg.delete(key: 11)
+        validate(tree: treeUWinnipeg, is: """
+                  14◼︎
+                04◻︎ 69◻︎
+            03◼︎ 12◼︎ 50◼︎ 82◼︎
+    --- --- --- --- --- --- 77◻︎ ---
+""")
+        treeUWinnipeg.delete(key: 12)
+        validate(tree: treeUWinnipeg, is: """
+                  14◼︎
+                04◼︎ 69◻︎
+            03◻︎ --- 50◼︎ 82◼︎
+    --- --- --- --- --- --- 77◻︎ ---
+""")
+        treeUWinnipeg.delete(key: 69)
+        validate(tree: treeUWinnipeg, is: """
+          14◼︎
+        04◼︎ 77◻︎
+    03◻︎ --- 50◼︎ 82◼︎
+""")
+        treeUWinnipeg.delete(key: 4)
+        validate(tree: treeUWinnipeg, is: """
+          14◼︎
+        03◼︎ 77◻︎
+    --- --- 50◼︎ 82◼︎
+""")
+        treeUWinnipeg.delete(key: 14)
+        validate(tree: treeUWinnipeg, is: """
+          50◼︎
+        03◼︎ 77◼︎
+    --- --- --- 82◻︎
+""")
+        treeUWinnipeg.delete(key: 82)
+        validate(tree: treeUWinnipeg, is: """
+      50◼︎
+    03◼︎ 77◼︎
+""")
+        treeUWinnipeg.delete(key: 50)
+        validate(tree: treeUWinnipeg, is: """
+      77◼︎
+    03◻︎ ---
+""")
+        treeUWinnipeg.delete(key: 77)
+        validate(tree: treeUWinnipeg, is: """
+    03◼︎
+""")
+    }
 }

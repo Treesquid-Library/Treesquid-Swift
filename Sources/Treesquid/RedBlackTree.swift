@@ -360,7 +360,7 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
         let hasRightChild = node.children[1] != nil
         // Replacement with max/min element in left/right sub-tree.
         if hasLeftChild && hasRightChild {
-            let inOrderDirection = 1
+            let inOrderDirection = node.children[0]!.children[0] == nil && node.children[0]!.children[1] == nil ? 1 : 0
             let inOrderNode = findInOrderNodeForDelete(node: node.children[inOrderDirection]!, direction: inOrderDirection)
             let nodeKey = node.key
             let nodeValue = node.value
@@ -382,6 +382,9 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
                 node.parent?.children[node.indexInParent()] = onlyChild
                 onlyChild.parent = node.parent
                 onlyChild.red = false
+                if node.parent == nil {
+                    self.root = onlyChild
+                }
                 return self
             }
             // else: fall through!
