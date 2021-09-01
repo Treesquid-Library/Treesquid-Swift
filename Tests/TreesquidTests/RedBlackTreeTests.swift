@@ -515,4 +515,29 @@ final class RedBlackTreeTests: XCTestCase {
     03◼︎
 """)
     }
+    
+    func testRandomTesting() {
+        for seed in [ 8271, 99001873, 3, 12349, 4237423, 69279 ] {
+            srand48(seed)
+            for nodes in [ 1, 2, 3, 4, 5, 6, 7, 10, 100, 200, 500, 1000 ] {
+                var availableKeys = Array(0..<nodes)
+                var insert_keys: [Int] = []
+                var delete_keys: [Int] = []
+                while !availableKeys.isEmpty {
+                    let key = availableKeys.remove(at: Int(drand48() * Double(availableKeys.count - 1)))
+                    insert_keys.append(key)
+                    delete_keys.insert(key, at: Int(drand48() * Double(delete_keys.count)))
+                }
+                let tree = RedBlackTree<Int, Any>()
+                for key in insert_keys {
+                    tree.insert(node: RedBlackTreeNode(key: key))
+                    XCTAssertTrue(hasRedBlackTreeProperties(tree: tree), "Insert results in uneven black-node count on paths.")
+                }
+                for key in delete_keys {
+                    tree.delete(key: key)
+                    XCTAssertTrue(hasRedBlackTreeProperties(tree: tree), "Delete results in uneven black-node count on paths.")
+                }
+            }
+        }
+    }
 }
