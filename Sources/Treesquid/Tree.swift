@@ -6,6 +6,20 @@ public enum NodeOperationError: Error {
     case immutable
 }
 
+public enum AnyNode<Key: Comparable, Value> {
+    case generalTreeNode(GeneralTreeNode<Key, Value>)
+    case mAryTreeNode(MAryTreeNode<Key, Value>)
+    case binaryTreeNode(BinaryTreeNode<Key, Value>)
+    case redBlackTreeNode(RedBlackTreeNode<Key, Value>)
+}
+
+public enum AnyTree<Key: Comparable, Value> {
+    case generalTree(GeneralTree<Key, Value>)
+    case mAryTree(MAryTree<Key, Value>)
+    case binaryTree(BinaryTree<Key, Value>)
+    case redBlackTree(RedBlackTree<Key, Value>)
+}
+
 internal protocol GenericNode {
     func capacity() -> Int
     
@@ -22,13 +36,11 @@ internal protocol GenericNode {
     func replace(childAt: Int, with node: GenericNode) -> Any
 }
 
-public protocol TraversableNode {
+public protocol Node {
     associatedtype Node
-    associatedtype Key
     associatedtype Value
     
     var parent: Node? { get }
-    var key: Key? { get }
     var value: Value? { get }
     
     // O(1)
@@ -39,6 +51,12 @@ public protocol TraversableNode {
     
     // O(1)
     subscript(index: Int) -> Node? { get }
+}
+
+public protocol KeyNode: Node {
+    associatedtype Key
+
+    var key: Key? { get }
 }
 
 public protocol MutableNode {
@@ -76,9 +94,6 @@ internal protocol GenericTree {
 }
 
 public protocol Tree {
-    associatedtype Tree
-    associatedtype Node
-    
     // O(1)
     func isEmpty() -> Bool
     
@@ -90,6 +105,14 @@ public protocol Tree {
     
     // O(n), where n is the number of nodes in the tree.
     func depth() -> Int
+}
+
+public protocol MutableTree {
+    associatedtype Tree
+    associatedtype Node
+    
+    // O(1)
+    var root: Node? { get }
         
     // Implementation dependent.
     func insert(node: Node) -> Tree

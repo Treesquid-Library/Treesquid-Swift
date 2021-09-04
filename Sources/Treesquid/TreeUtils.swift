@@ -40,3 +40,19 @@ func details(node: RedBlackTreeNode<Int, Any>, appendSpace: Bool) -> String {
     let color = node.red ? "◻︎" : "◼︎"
     return "\(String(format: "%02d", node.key))\(color)" + (appendSpace ? " " : "")
 }
+
+public func checkIntegrity<Key, Value>(tree: AnyTree<Key, Value>) -> Bool {
+    switch tree {
+    case .generalTree(let tree):
+        if tree.isEmpty() { return true }
+    case .mAryTree(let tree):
+        if tree.isEmpty() { return true }
+    case .binaryTree(let tree):
+        if tree.isEmpty() { return true }
+    case .redBlackTree(let tree):
+        if tree.isEmpty() { return true }
+    default:
+        return false
+    }
+    return false
+}

@@ -1,6 +1,6 @@
 import Foundation
 
-public class MAryTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, TraversableNode, MutableNode {
+public class MAryTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, KeyNode, MutableNode {
     public typealias Node = MAryTreeNode<Key, Value>
     public typealias Key = Key
     public typealias Value = Value
@@ -91,11 +91,11 @@ public class MAryTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, TraversableN
     }
 }
 
-public class MAryTree<Key, Value>: Tree, GenericTree {
+public class MAryTree<Key, Value>: MutableTree, GenericTree {
     public typealias Tree = MAryTree<Key, Value>
     public typealias Node = MAryTreeNode<Key, Value>
     
-    var root: Node?
+    private(set) public var root: Node?
     private(set) public var m: UInt
 
     public init(m: UInt) {

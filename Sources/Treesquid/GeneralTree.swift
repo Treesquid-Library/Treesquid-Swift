@@ -1,6 +1,6 @@
 import Foundation
 
-public class GeneralTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, TraversableNode, MutableNode {
+public class GeneralTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, KeyNode, MutableNode {
     public typealias Node = GeneralTreeNode<Key, Value>
     public typealias Key = Key
     public typealias Value = Value
@@ -67,11 +67,11 @@ public class GeneralTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, Traversab
     }
 }
 
-public class GeneralTree<Key, Value>: Tree, GenericTree {
+public class GeneralTree<Key, Value>: MutableTree, GenericTree {
     public typealias Tree = GeneralTree<Key, Value>
     public typealias Node = GeneralTreeNode<Key, Value>
     
-    var root: Node?
+    private(set) public var root: Node?
     
     //
     // Boolean tree-properties

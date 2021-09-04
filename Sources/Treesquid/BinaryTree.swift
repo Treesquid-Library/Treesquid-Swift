@@ -1,6 +1,6 @@
 import Foundation
 
-public class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNode {
+public class BinaryTreeNode<Key, Value>: KeyNode, MutableNode, GenericNode {
     public typealias Node = BinaryTreeNode<Key, Value>
     public typealias Key = Key
     public typealias Value = Value
@@ -143,7 +143,7 @@ public class BinaryTreeNode<Key, Value>: TraversableNode, MutableNode, GenericNo
     }
 }
 
-class BinaryTree<Key, Value>: GenericTree {
+public class BinaryTree<Key, Value>: GenericTree {
     typealias Tree = BinaryTree<Key, Value>
     typealias Node = BinaryTreeNode<Key, Value>
 
