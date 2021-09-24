@@ -51,8 +51,6 @@ public func checkIntegrity<Key, Value>(tree: AnyTree<Key, Value>) -> Bool {
         if tree.isEmpty() { return true }
     case .redBlackTree(let tree):
         if tree.isEmpty() { return true }
-    default:
-        return false
     }
     return false
 }
