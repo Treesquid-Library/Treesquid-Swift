@@ -3,36 +3,36 @@ import XCTest
 @testable import Treesquid
 
 final class GeneralTreeTests: XCTestCase {
-    static let treeTwoLevelsTreeInsert = GeneralTree<Int, Any>()
-        .insert(node: GeneralTreeNode(key: 100))
-        .insert(node: GeneralTreeNode(key: 200))
-        .insert(node: GeneralTreeNode(key: 201))
-        .insert(node: GeneralTreeNode(key: 202))
-        .insert(node: GeneralTreeNode(key: 203))
-        .insert(node: GeneralTreeNode(key: 204))
-    static let treeTwoLevelsNodeInsert = GeneralTree<String, Any>()
-        .insert(node: try! GeneralTreeNode(key: "n0")
-                    .append(GeneralTreeNode(key: "n1"))
-                    .append(GeneralTreeNode(key: "n2"))
-                    .append(GeneralTreeNode(key: "n3")))
-    static let nodeDegree3Count3 =  try! GeneralTreeNode<String, Any>(key: "root")
-        .append(GeneralTreeNode(key: "1"))
-        .append(GeneralTreeNode(key: "2"))
-        .append(GeneralTreeNode(key: "3"))
+    static let treeTwoLevelsTreeInsert = GeneralTree<Int>()
+        .insert(node: GeneralTreeNode(value: 100))
+        .insert(node: GeneralTreeNode(value: 200))
+        .insert(node: GeneralTreeNode(value: 201))
+        .insert(node: GeneralTreeNode(value: 202))
+        .insert(node: GeneralTreeNode(value: 203))
+        .insert(node: GeneralTreeNode(value: 204))
+    static let treeTwoLevelsNodeInsert = GeneralTree<String>()
+        .insert(node: try! GeneralTreeNode(value: "n0")
+                    .append(GeneralTreeNode(value: "n1"))
+                    .append(GeneralTreeNode(value: "n2"))
+                    .append(GeneralTreeNode(value: "n3")))
+    static let nodeDegree3Count3 =  try! GeneralTreeNode<String>(value: "root")
+        .append(GeneralTreeNode(value: "1"))
+        .append(GeneralTreeNode(value: "2"))
+        .append(GeneralTreeNode(value: "3"))
     
     func testEmptyTreeIsEmpty() {
-        let emptyTree = GeneralTree<Any, Any>()
+        let emptyTree = GeneralTree<Any>()
         XCTAssert(emptyTree.isEmpty(), "Tree is not empty.")
     }
     
     func testEmptyTreeZeroWidth() {
-        let emptyTree = GeneralTree<Any, Any>()
+        let emptyTree = GeneralTree<Any>()
         let width = emptyTree.width()
         XCTAssert(width == 0, "Width is \(width). Expected: 0")
     }
     
     func testEmptyTreeZeroDepth() {
-        let emptyTree = GeneralTree<Any, Any>()
+        let emptyTree = GeneralTree<Any>()
         let depth = emptyTree.depth()
         XCTAssert(depth == 0, "Depth is \(depth). Expected: 0")
     }
@@ -69,13 +69,13 @@ final class GeneralTreeTests: XCTestCase {
             for nodeIndex in 0..<numberOfNodes {
                 let node = levels[level][nodeIndex]
                 let inLevelAddress = 10 * (nodeIndex / numberOfNodes) + nodeIndex % numberOfNodes
-                let expectedKey = (level + 1) * 100 + inLevelAddress
-                if node.key == nil {
-                    XCTFail("Node key is nil. Expected: \(expectedKey)")
+                let expectedValue = (level + 1) * 100 + inLevelAddress
+                if node.value == nil {
+                    XCTFail("Node value is nil. Expected: \(expectedValue)")
                     continue
                 }
-                XCTAssert(node.key! == expectedKey,
-                          "Node key is \(node.key!). Expected: \(expectedKey)")
+                XCTAssert(node.value! == expectedValue,
+                          "Node value is \(node.value!). Expected: \(expectedValue)")
             }
         }
     }
@@ -101,15 +101,15 @@ final class GeneralTreeTests: XCTestCase {
             XCTFail("Root node is nil.")
             return
         }
-        XCTAssert(rootNode.key! == "n0",
-                  "Root node's key is \(rootNode.key!). Expected: n0")
+        XCTAssert(rootNode.value! == "n0",
+                  "Root node's value is \(rootNode.value!). Expected: n0")
         for index in 0...1 {
             XCTAssert(rootNode[index] != nil,
                       "Child node at index \(index) is nil.")
-            let observedKey = rootNode[index]!.key!
-            let expectedKey = "n\(index + 1)"
-            XCTAssert(observedKey == expectedKey,
-                      "Child node at \(index) has a key of \(observedKey). Expected: \(expectedKey)")
+            let observedValue = rootNode[index]!.value!
+            let expectedValue = "n\(index + 1)"
+            XCTAssert(observedValue == expectedValue,
+                      "Child node at \(index) has a value of \(observedValue). Expected: \(expectedValue)")
         }
     }
     
@@ -133,9 +133,9 @@ final class GeneralTreeTests: XCTestCase {
     }
     
     func testNodeDegree2Remove() {
-        let nodeDegree2Remove =  try! GeneralTreeNode<String, Any>(key: "root")
-            .append(GeneralTreeNode(key: "1"))
-            .append(GeneralTreeNode(key: "2"))
+        let nodeDegree2Remove =  try! GeneralTreeNode<String>(value: "root")
+            .append(GeneralTreeNode(value: "1"))
+            .append(GeneralTreeNode(value: "2"))
         nodeDegree2Remove[0] = nil
         
         let degree = nodeDegree2Remove.degree()

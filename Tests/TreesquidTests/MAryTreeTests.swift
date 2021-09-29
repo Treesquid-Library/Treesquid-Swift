@@ -3,43 +3,43 @@ import XCTest
 @testable import Treesquid
 
 final class MAryTreeTests: XCTestCase {
-    static let treeBinaryTree = MAryTree<String, Any>(m: 2)
-        .insert(node: MAryTreeNode(key: "root1"))
-        .insert(node: MAryTreeNode(key: "l2"))
-        .insert(node: MAryTreeNode(key: "r2"))
-        .insert(node: MAryTreeNode(key: "ll3"))
-        .insert(node: MAryTreeNode(key: "lr3"))
-        .insert(node: MAryTreeNode(key: "rl3"))
-        .insert(node: MAryTreeNode(key: "rr3"))
+    static let treeBinaryTree = MAryTree<String>(m: 2)
+        .insert(node: MAryTreeNode(value: "root1"))
+        .insert(node: MAryTreeNode(value: "l2"))
+        .insert(node: MAryTreeNode(value: "r2"))
+        .insert(node: MAryTreeNode(value: "ll3"))
+        .insert(node: MAryTreeNode(value: "lr3"))
+        .insert(node: MAryTreeNode(value: "rl3"))
+        .insert(node: MAryTreeNode(value: "rr3"))
     static let treeTernaryTreeM: UInt = 3
-    static let treeTernaryTree = MAryTree<Int, Any>(m: treeTernaryTreeM)
-        .insert(node: MAryTreeNode(key: 100))
-        .insert(node: MAryTreeNode(key: 200))
-        .insert(node: MAryTreeNode(key: 201))
-        .insert(node: MAryTreeNode(key: 202))
-        .insert(node: MAryTreeNode(key: 300))
-        .insert(node: MAryTreeNode(key: 301))
-        .insert(node: MAryTreeNode(key: 302))
-        .insert(node: MAryTreeNode(key: 310))
-        .insert(node: MAryTreeNode(key: 311))
-        .insert(node: MAryTreeNode(key: 312))
-        .insert(node: MAryTreeNode(key: 320))
-        .insert(node: MAryTreeNode(key: 321))
-        .insert(node: MAryTreeNode(key: 322))
+    static let treeTernaryTree = MAryTree<Int>(m: treeTernaryTreeM)
+        .insert(node: MAryTreeNode(value: 100))
+        .insert(node: MAryTreeNode(value: 200))
+        .insert(node: MAryTreeNode(value: 201))
+        .insert(node: MAryTreeNode(value: 202))
+        .insert(node: MAryTreeNode(value: 300))
+        .insert(node: MAryTreeNode(value: 301))
+        .insert(node: MAryTreeNode(value: 302))
+        .insert(node: MAryTreeNode(value: 310))
+        .insert(node: MAryTreeNode(value: 311))
+        .insert(node: MAryTreeNode(value: 312))
+        .insert(node: MAryTreeNode(value: 320))
+        .insert(node: MAryTreeNode(value: 321))
+        .insert(node: MAryTreeNode(value: 322))
     
     func testEmptyTreeIsEmpty() {
-        let emptyTree = MAryTree<Any, Any>(m: 1)
+        let emptyTree = MAryTree<Any>(m: 1)
         XCTAssert(emptyTree.isEmpty(), "Tree is not empty.")
     }
     
     func testEmptyTreeZeroWidth() {
-        let emptyTree = MAryTree<Any, Any>(m: 1)
+        let emptyTree = MAryTree<Any>(m: 1)
         let width = emptyTree.width()
         XCTAssert(width == 0, "Width is \(width). Expected: 0")
     }
     
     func testEmptyTreeZeroDepth() {
-        let emptyTree = MAryTree<Any, Any>(m: 1)
+        let emptyTree = MAryTree<Any>(m: 1)
         let depth = emptyTree.depth()
         XCTAssert(depth == 0, "Depth is \(depth). Expected: 0")
     }
@@ -79,13 +79,13 @@ final class MAryTreeTests: XCTestCase {
                 let node = levels[level][nodeIndex]
                 let inLevelAddress = 10 * (nodeIndex / Int(MAryTreeTests.treeTernaryTreeM))
                     + nodeIndex % Int(MAryTreeTests.treeTernaryTreeM)
-                let expectedKey = (level + 1) * 100 + inLevelAddress
-                if node.key == nil {
-                    XCTFail("Node key is nil. Expected: \(expectedKey)")
+                let expectedValue = (level + 1) * 100 + inLevelAddress
+                if node.value == nil {
+                    XCTFail("Node value is nil. Expected: \(expectedValue)")
                     continue
                 }
-                XCTAssert(node.key! == expectedKey,
-                          "Node key is \(node.key!). Expected: \(expectedKey)")
+                XCTAssert(node.value! == expectedValue,
+                          "Node value is \(node.value!). Expected: \(expectedValue)")
             }
         }
     }

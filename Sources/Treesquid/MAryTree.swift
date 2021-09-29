@@ -1,22 +1,15 @@
 import Foundation
 
-public class MAryTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, KeyNode, MutableNode {
-    public typealias Node = MAryTreeNode<Key, Value>
-    public typealias Key = Key
+public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
+    public typealias Node = MAryTreeNode<Value>
     public typealias Value = Value
 
     private(set) public var parent: Node?
-    private(set) public var key: Key?
     private(set) public var value: Value?
 
-    internal var tree: MAryTree<Key, Value>?
+    internal var tree: MAryTree<Value>?
     
-    public convenience init(key: Key?) {
-        self.init(key: key, value: nil)
-    }
-    
-    public init(key: Key?, value: Value?) {
-        self.key = key
+    public init(value: Value?) {
         self.value = value
     }
     
@@ -40,47 +33,47 @@ public class MAryTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, KeyNode, Mut
     //
     
     @discardableResult
-    public func append(_ child: MAryTreeNode<Key, Value>) throws -> MAryTreeNode<Key, Value> {
+    public func append(_ child: MAryTreeNode<Value>) throws -> MAryTreeNode<Value> {
         let m = try maxDegree()
         if degree() >= m {
             throw NodeOperationError.childCapacityExceeded
         }
         child.tree = tree;
         child.parent = self;
-        return try super.append(child) as! MAryTreeNode<Key, Value>
+        return try super.append(child) as! MAryTreeNode<Value>
     }
     
     @discardableResult
-    public func prepend(_ child: MAryTreeNode<Key, Value>) throws -> MAryTreeNode<Key, Value> {
+    public func prepend(_ child: MAryTreeNode<Value>) throws -> MAryTreeNode<Value> {
         let m = try maxDegree()
         if degree() >= m {
             throw NodeOperationError.childCapacityExceeded
         }
         child.tree = tree;
         child.parent = self;
-        return try super.prepend(child) as! MAryTreeNode<Key, Value>
+        return try super.prepend(child) as! MAryTreeNode<Value>
     }
     
     @discardableResult
-    public func insert(_ child: MAryTreeNode<Key, Value>, at index: Int) throws -> MAryTreeNode<Key, Value> {
+    public func insert(_ child: MAryTreeNode<Value>, at index: Int) throws -> MAryTreeNode<Value> {
         let m = try maxDegree()
         if degree() >= m {
             throw NodeOperationError.childCapacityExceeded
         }
         child.tree = tree;
         child.parent = self;
-        return try super.insert(child, at: index) as! MAryTreeNode<Key, Value>
+        return try super.insert(child, at: index) as! MAryTreeNode<Value>
     }
     
     @discardableResult
-    public override func remove(at index: Int) -> MAryTreeNode<Key, Value> {
-        return super.remove(at: index) as! MAryTreeNode<Key, Value>
+    public override func remove(at index: Int) -> MAryTreeNode<Value> {
+        return super.remove(at: index) as! MAryTreeNode<Value>
     }
     
     @discardableResult
-    public func replace(childAt: Int, with node: MAryTreeNode<Key, Value>) -> MAryTreeNode<Key, Value> {
+    public func replace(childAt: Int, with node: MAryTreeNode<Value>) -> MAryTreeNode<Value> {
         node.parent = self
-        return super.replace(childAt: childAt, with: node) as! MAryTreeNode<Key, Value>
+        return super.replace(childAt: childAt, with: node) as! MAryTreeNode<Value>
     }
     
     internal func maxDegree() throws -> UInt {
@@ -91,9 +84,9 @@ public class MAryTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, KeyNode, Mut
     }
 }
 
-public class MAryTree<Key, Value>: MutableTree, GenericTree {
-    public typealias Tree = MAryTree<Key, Value>
-    public typealias Node = MAryTreeNode<Key, Value>
+public class MAryTree<Value>: MutableTree, GenericTree {
+    public typealias Tree = MAryTree<Value>
+    public typealias Node = MAryTreeNode<Value>
     
     private(set) public var root: Node?
     private(set) public var m: UInt

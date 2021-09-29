@@ -7,16 +7,16 @@ public enum NodeOperationError: Error {
 }
 
 public enum AnyNode<Key: Comparable, Value> {
-    case generalTreeNode(GeneralTreeNode<Key, Value>)
-    case mAryTreeNode(MAryTreeNode<Key, Value>)
-    case binaryTreeNode(BinaryTreeNode<Key, Value>)
+    case generalTreeNode(GeneralTreeNode<Value>)
+    case mAryTreeNode(MAryTreeNode<Value>)
+    case binaryTreeNode(BinaryTreeNode<Value>)
     case redBlackTreeNode(RedBlackTreeNode<Key, Value>)
 }
 
 public enum AnyTree<Key: Comparable, Value> {
-    case generalTree(GeneralTree<Key, Value>)
-    case mAryTree(MAryTree<Key, Value>)
-    case binaryTree(BinaryTree<Key, Value>)
+    case generalTree(GeneralTree<Value>)
+    case mAryTree(MAryTree<Value>)
+    case binaryTree(BinaryTree<Value>)
     case redBlackTree(RedBlackTree<Key, Value>)
 }
 

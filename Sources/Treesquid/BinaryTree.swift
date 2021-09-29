@@ -1,8 +1,7 @@
 import Foundation
 
-public class BinaryTreeNode<Key, Value>: KeyNode, MutableNode, GenericNode {
-    public typealias Node = BinaryTreeNode<Key, Value>
-    public typealias Key = Key
+public class BinaryTreeNode<Value>: MutableNode, GenericNode {
+    public typealias Node = BinaryTreeNode<Value>
     public typealias Value = Value
     
     enum Child: Int {
@@ -11,15 +10,9 @@ public class BinaryTreeNode<Key, Value>: KeyNode, MutableNode, GenericNode {
     
     private(set) public var parent: Node?
     private lazy var children: [Node?] = [ nil, nil ]
-    private(set) public var key: Key?
     private(set) public var value: Value?
     
-    convenience init(key: Key?) {
-        self.init(key: key, value: nil)
-    }
-    
-    init(key: Key?, value: Value?) {
-        self.key = key
+    init(value: Value?) {
         self.value = value
     }
     
@@ -138,14 +131,14 @@ public class BinaryTreeNode<Key, Value>: KeyNode, MutableNode, GenericNode {
     
     @discardableResult
     func replace(childAt: Int, with node: GenericNode) -> Any {
-        children[childAt] = node as? BinaryTreeNode<Key, Value>
+        children[childAt] = node as? BinaryTreeNode<Value>
         return self
     }
 }
 
-public class BinaryTree<Key, Value>: GenericTree {
-    typealias Tree = BinaryTree<Key, Value>
-    typealias Node = BinaryTreeNode<Key, Value>
+public class BinaryTree<Value>: GenericTree {
+    typealias Tree = BinaryTree<Value>
+    typealias Node = BinaryTreeNode<Value>
 
     var root: Node?
     

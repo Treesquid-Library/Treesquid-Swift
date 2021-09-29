@@ -1,8 +1,7 @@
 import Foundation
 
-public class DynamicTreeNode<Key, Value>: GenericNode {
-    public typealias Node = DynamicTreeNode<Key, Value>
-    public typealias Key = Key
+public class UnboundedTreeNode<Value>: GenericNode {
+    public typealias Node = UnboundedTreeNode<Value>
     public typealias Value = Value
 
     private lazy var children: [Node] = []

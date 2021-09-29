@@ -1,20 +1,13 @@
 import Foundation
 
-public class GeneralTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, KeyNode, MutableNode {
-    public typealias Node = GeneralTreeNode<Key, Value>
-    public typealias Key = Key
+public class GeneralTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
+    public typealias Node = GeneralTreeNode<Value>
     public typealias Value = Value
     
     private(set) public var parent: Node?
-    private(set) public var key: Key?
     private(set) public var value: Value?
     
-    public convenience init(key: Key?) {
-        self.init(key: key, value: nil)
-    }
-    
-    public init(key: Key?, value: Value?) {
-        self.key = key
+    public init(value: Value?) {
         self.value = value
     }
     
@@ -38,38 +31,38 @@ public class GeneralTreeNode<Key, Value>: DynamicTreeNode<Key, Value>, KeyNode, 
     //
     
     @discardableResult
-    public func append(_ child: GeneralTreeNode<Key, Value>) throws -> GeneralTreeNode<Key, Value> {
+    public func append(_ child: GeneralTreeNode<Value>) throws -> GeneralTreeNode<Value> {
         child.parent = self;
-        return try super.append(child) as! GeneralTreeNode<Key, Value>
+        return try super.append(child) as! GeneralTreeNode<Value>
     }
     
     @discardableResult
-    public func prepend(_ child: GeneralTreeNode<Key, Value>) throws -> GeneralTreeNode<Key, Value> {
+    public func prepend(_ child: GeneralTreeNode<Value>) throws -> GeneralTreeNode<Value> {
         child.parent = self;
-        return try super.prepend(child) as! GeneralTreeNode<Key, Value>
+        return try super.prepend(child) as! GeneralTreeNode<Value>
     }
     
     @discardableResult
-    public func insert(_ child: GeneralTreeNode<Key, Value>, at index: Int) throws -> GeneralTreeNode<Key, Value> {
+    public func insert(_ child: GeneralTreeNode<Value>, at index: Int) throws -> GeneralTreeNode<Value> {
         child.parent = self;
-        return try super.insert(child, at: index) as! GeneralTreeNode<Key, Value>
+        return try super.insert(child, at: index) as! GeneralTreeNode<Value>
     }
     
     @discardableResult
-    public override func remove(at index: Int) -> GeneralTreeNode<Key, Value> {
-        return super.remove(at: index) as! GeneralTreeNode<Key, Value>
+    public override func remove(at index: Int) -> GeneralTreeNode<Value> {
+        return super.remove(at: index) as! GeneralTreeNode<Value>
     }
     
     @discardableResult
-    public func replace(childAt: Int, with node: GeneralTreeNode<Key, Value>) -> GeneralTreeNode<Key, Value> {
+    public func replace(childAt: Int, with node: GeneralTreeNode<Value>) -> GeneralTreeNode<Value> {
         node.parent = self
-        return super.replace(childAt: childAt, with: node) as! GeneralTreeNode<Key, Value>
+        return super.replace(childAt: childAt, with: node) as! GeneralTreeNode<Value>
     }
 }
 
-public class GeneralTree<Key, Value>: MutableTree, GenericTree {
-    public typealias Tree = GeneralTree<Key, Value>
-    public typealias Node = GeneralTreeNode<Key, Value>
+public class GeneralTree<Value>: MutableTree, GenericTree {
+    public typealias Tree = GeneralTree<Value>
+    public typealias Node = GeneralTreeNode<Value>
     
     private(set) public var root: Node?
     
