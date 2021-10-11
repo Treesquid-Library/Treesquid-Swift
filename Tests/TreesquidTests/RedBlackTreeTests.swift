@@ -17,11 +17,11 @@ final class RedBlackTreeTests: XCTestCase {
         .insert(node: RedBlackTreeNode(key: 80))
 
     //
-    // Trees for testing deletions:
+    // Functions for testing deletions:
     //
         
     func validate(tree: RedBlackTree<Int, Any>, is reference: String) {
-        XCTAssert(traverse(tree: tree) == reference, "Trees differ. Expected:\n\(reference)")
+        XCTAssert(traverse(tree) == reference, "Trees differ. Expected:\n\(reference)")
     }
 
     private func traverseAndCountBlackNodes(node: RedBlackTreeNode<Int, Any>?, seenBlackNodes: Int, blackNodesOnPaths: inout [Int]) {
@@ -45,6 +45,10 @@ final class RedBlackTreeTests: XCTestCase {
         let sample = blackNodesRootToNilNodes.first
         return blackNodesRootToNilNodes.filter { $0 != sample }.count == 0
     }
+    
+    //
+    // Unit tests:
+    //
     
     // Example from:
     // https://60devs.com/a/data-structures/red-black-tree/

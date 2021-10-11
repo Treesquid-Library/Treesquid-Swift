@@ -56,7 +56,30 @@ public protocol Node {
 public protocol KeyNode: Node {
     associatedtype Key
 
-    var key: Key? { get }
+    var key: Key { get }
+}
+
+public protocol ArrayNode {
+    associatedtype Node
+    associatedtype Value
+    
+    var parent: Node? { get }
+    var values: [Value?] { get }
+    
+    // O(1)
+    func capacity() -> Int
+    
+    // O(n), where n is the degree of the node.
+    func degree() -> Int
+    
+    // O(1)
+    subscript(index: Int) -> Node? { get }
+}
+
+public protocol KeyArrayNode: ArrayNode {
+    associatedtype Key
+
+    var keys: [Key] { get }
 }
 
 public protocol MutableNode {

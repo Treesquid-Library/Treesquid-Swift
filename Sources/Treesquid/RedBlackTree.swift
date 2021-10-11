@@ -4,13 +4,13 @@ import Foundation
 //       as left/right, because index-arithmetic is being used.
 //       Using an enumeration would make overshadow that left/right
 //       must be assigned to 0/1.
-public class RedBlackTreeNode<Key: Comparable, Value>: GenericNode {
+public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode, GenericNode {
     public typealias Node = RedBlackTreeNode<Key, Value>
     public typealias Key = Key
     public typealias Value = Value
     
     internal var red: Bool
-    internal var parent: Node?
+    internal(set) public var parent: Node?
     internal var grandparent: Node? {
         get {
             guard let parent = parent else { return nil }
@@ -73,6 +73,16 @@ public class RedBlackTreeNode<Key: Comparable, Value>: GenericNode {
         Treesquid.capacity(of: self)
     }
     
+    public subscript(index: Int) -> Node? {
+        get {
+            children[index]
+        }
+        set(newChild) {
+            children[index] = newChild
+        }
+    }
+    
+    
     //
     // Child access (internal)
     //
@@ -116,6 +126,7 @@ public class RedBlackTreeNode<Key: Comparable, Value>: GenericNode {
     //
     // Private helpers for calculating siblings and nephews.
     //
+    
     internal func indexInParent() -> Int {
         return indexIn(parent: parent!)
     }
@@ -125,7 +136,7 @@ public class RedBlackTreeNode<Key: Comparable, Value>: GenericNode {
     }
 }
 
-public class RedBlackTree<Key: Comparable, Value>: GenericTree {
+public class RedBlackTree<Key: Comparable, Value>: Tree, GenericTree {
     typealias Tree = RedBlackTree<Key, Value>
     typealias Node = RedBlackTreeNode<Key, Value>
 
@@ -145,19 +156,19 @@ public class RedBlackTree<Key: Comparable, Value>: GenericTree {
     
     var root: Node?
     
-    func isEmpty() -> Bool {
+    public func isEmpty() -> Bool {
         return root == nil
     }
     
-    func width() -> Int {
+    public func width() -> Int {
         return Treesquid.width(of: self)
     }
     
-    func count() -> Int {
+    public func count() -> Int {
         return Treesquid.count(of: self)
     }
     
-    func depth() -> Int {
+    public func depth() -> Int {
         return Treesquid.depth(of: self)
     }
     
