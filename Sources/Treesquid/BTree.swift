@@ -42,6 +42,11 @@ public class BTreeNode<Key: Comparable, Value>: KeyArrayNode, GenericNode {
         Treesquid.capacity(of: self)
     }
     
+    public func maxDegree() -> Int {
+        guard let tree = tree else { return 0 }
+        return Int(tree.m + 1)
+    }
+    
     public subscript(index: Int) -> Node? {
         get {
             child(at: index) as! Node?
@@ -128,11 +133,15 @@ public class BTreeNodeSlice<Key: Comparable, Value>: Node {
     //
     
     public func degree() -> Int {
-        return children.count
+        return children.map { $0 != nil ? 1 : 0 }.reduce(0, { x, y in x + y })
     }
     
     public func capacity() -> Int {
         return children.count
+    }
+    
+    public func maxDegree() -> Int {
+        return 2
     }
     
     public subscript(index: Int) -> Node? {
@@ -175,6 +184,7 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     func insert(_ value: Value, forKey: Key) -> Tree {
         guard let root = root else {
             self.root = BTreeNode(keys: [forKey], values: [value], children: [nil, nil])
+            self.root!.tree = self
             return self
         }
         let (node, index) = findForUpdate(node: root, key: forKey)
@@ -248,11 +258,12 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
         return root!
     }
     
-    func insert(node: Node, left: Node?, right: Node?, key: Key, value: Value, at index: Int) {
+    func insert(node: Node, left: Node?, right: Node?, key: Key, value: Value?, at index: Int) {
         if node.keys.count < m {
             node.keys.insert(key, at: index)
             node.values.insert(value, at: index)
-            node.children.insert(nil, at: index+1)
+            node.children.insert(left, at: index)
+            node.children[index + 1] = right
             return
         }
         node.keys.insert(key, at: index)
@@ -265,21 +276,26 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
         let right = BTreeNode(keys: Array(node.keys[(splitIndex + 1)...]),
                               values: Array(node.values[(splitIndex + 1)...]),
                               children: [nil, nil])
+        left.tree = self
+        right.tree = self
         if node.parent == nil {
             // We are at the root!
             root = BTreeNode(keys: [node.keys[splitIndex]],
                              values: [node.values[splitIndex]],
                              children: [left, right])
+            root!.tree = self
             left.parent = root
             right.parent = root
             return
         }
+        left.parent = node.parent!
+        right.parent = node.parent!
         let (_, indexInParent) = node.parent!.keys.insertionIndex(value: key)
         insert(node: node.parent!,
                left: left,
                right: right,
-               key: key,
-               value: value,
+               key: node.keys[splitIndex],
+               value: node.values[splitIndex],
                at: indexInParent)
     }
     

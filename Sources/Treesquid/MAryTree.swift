@@ -34,8 +34,7 @@ public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
     
     @discardableResult
     public func append(_ child: MAryTreeNode<Value>) throws -> MAryTreeNode<Value> {
-        let m = try maxDegree()
-        if degree() >= m {
+        if degree() >= maxDegree() {
             throw NodeOperationError.childCapacityExceeded
         }
         child.tree = tree;
@@ -45,8 +44,7 @@ public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
     
     @discardableResult
     public func prepend(_ child: MAryTreeNode<Value>) throws -> MAryTreeNode<Value> {
-        let m = try maxDegree()
-        if degree() >= m {
+        if degree() >= maxDegree() {
             throw NodeOperationError.childCapacityExceeded
         }
         child.tree = tree;
@@ -56,8 +54,7 @@ public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
     
     @discardableResult
     public func insert(_ child: MAryTreeNode<Value>, at index: Int) throws -> MAryTreeNode<Value> {
-        let m = try maxDegree()
-        if degree() >= m {
+        if degree() >= maxDegree() {
             throw NodeOperationError.childCapacityExceeded
         }
         child.tree = tree;
@@ -76,11 +73,9 @@ public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
         return super.replace(childAt: childAt, with: node) as! MAryTreeNode<Value>
     }
     
-    internal func maxDegree() throws -> UInt {
-        guard let tree = tree else {
-            throw NodeOperationError.treeUnassigned
-        }
-        return tree.m
+    override public func maxDegree() -> Int {
+        guard let tree = tree else { return 0 }
+        return Int(tree.m)
     }
 }
 

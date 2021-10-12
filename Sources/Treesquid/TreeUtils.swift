@@ -14,14 +14,22 @@ internal func traverse_(_ tree: Tree) -> String {
     if tree.isEmpty() {
         return "" // Empty tree is empty!
     }
+    
+    let nodeDegree: Double
+    if let tree = tree as? BTree<Int, Any> {
+        nodeDegree = Double(tree.m + 1)
+    } else {
+        nodeDegree = 2.0
+    }
+    
     var treeUnicodeArt = ""
     let detailsWidth = 3 // Note: Does not include separating space.
     let indentWidth = detailsWidth + 1 // Number of spaces to indent every line.
     let depth = tree.depth()
-    let maxNodesAtBottom = pow(2.0, Double(depth) - 1.0)
+    let maxNodesAtBottom = pow(nodeDegree, Double(depth) - 1.0)
     let levelStack = levels(of: tree as! GenericTree, fillWithVoidNodes: true)
     for levelIndex in 0..<levelStack.count {
-        let maxNodesInLevel = pow(2.0, Double(levelIndex))
+        let maxNodesInLevel = pow(nodeDegree, Double(levelIndex))
         treeUnicodeArt += String(repeating: " ", count: indentWidth)
         treeUnicodeArt += String(repeating: " ",
                                  count: Int(Double(detailsWidth + 1) / 2.0 * (maxNodesAtBottom - maxNodesInLevel)))

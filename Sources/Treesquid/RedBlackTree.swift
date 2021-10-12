@@ -73,6 +73,10 @@ public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode, GenericNode {
         Treesquid.capacity(of: self)
     }
     
+    public func maxDegree() -> Int {
+        return 2
+    }
+    
     public subscript(index: Int) -> Node? {
         get {
             children[index]

@@ -25,6 +25,8 @@ internal protocol GenericNode {
     
     func degree() -> Int
     
+    func maxDegree() -> Int
+    
     func child(at index: Int) -> GenericNode?
     
     func getChildren() -> [GenericNode?]
@@ -50,6 +52,9 @@ public protocol Node {
     func degree() -> Int
     
     // O(1)
+    func maxDegree() -> Int
+    
+    // O(1)
     subscript(index: Int) -> Node? { get }
 }
 
@@ -71,6 +76,9 @@ public protocol ArrayNode {
     
     // O(n), where n is the degree of the node.
     func degree() -> Int
+    
+    // O(1)
+    func maxDegree() -> Int
     
     // O(1)
     subscript(index: Int) -> Node? { get }
@@ -163,6 +171,10 @@ internal class VoidNode: GenericNode {
         return arity
     }
     
+    func maxDegree() -> Int {
+        return arity
+    }
+    
     func child(at index: Int) -> GenericNode? {
         return nil
     }
@@ -239,13 +251,17 @@ fileprivate func levels(levelStack: inout [[GenericNode]], fillWithVoidNodes: Bo
     if fillWithVoidNodes {
         var allNodesAreVoid = true
         for node in deepestLevel {
-            for childIndex in 0..<node.capacity() {
-                let child = node.child(at: childIndex)
-                if child != nil && !(child is VoidNode) {
-                    nextLevel.append(child!)
-                    allNodesAreVoid = false
+            for childIndex in 0..<node.maxDegree() {
+                if childIndex < node.capacity() {
+                    let child = node.child(at: childIndex)
+                    if child != nil && !(child is VoidNode) {
+                        nextLevel.append(child!)
+                        allNodesAreVoid = false
+                    } else {
+                        nextLevel.append(VoidNode(degree: node.maxDegree()))
+                    }
                 } else {
-                    nextLevel.append(VoidNode(degree: node.capacity()))
+                    nextLevel.append(VoidNode(degree: node.maxDegree()))
                 }
             }
         }

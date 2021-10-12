@@ -18,6 +18,10 @@ public class UnboundedTreeNode<Value>: GenericNode {
         Treesquid.capacity(of: self)
     }
     
+    public func maxDegree() -> Int {
+        return Int.max
+    }
+    
     //
     // Child access
     //

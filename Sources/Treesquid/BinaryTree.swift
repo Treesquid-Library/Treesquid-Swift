@@ -28,6 +28,10 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
         Treesquid.capacity(of: self)
     }
     
+    public func maxDegree() -> Int {
+        return 2
+    }
+    
     //
     // Child access
     //
