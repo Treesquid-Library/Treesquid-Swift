@@ -264,18 +264,23 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
             node.values.insert(value, at: index)
             node.children.insert(left, at: index)
             node.children[index + 1] = right
+            left?.parent = node
+            right?.parent = node
             return
         }
         node.keys.insert(key, at: index)
         node.values.insert(value, at: index)
-        node.children.append(nil)
+        node.children.insert(left, at: index)
+        node.children[index + 1] = right
+        left?.parent = node
+        right?.parent = node
         let splitIndex = node.keys.count / 2
         let left = BTreeNode(keys: Array(node.keys[..<splitIndex]),
                              values: Array(node.values[..<splitIndex]),
-                             children: [nil, nil])
+                             children: Array(node.children[...splitIndex]))
         let right = BTreeNode(keys: Array(node.keys[(splitIndex + 1)...]),
                               values: Array(node.values[(splitIndex + 1)...]),
-                              children: [nil, nil])
+                              children: Array(node.children[(splitIndex + 1)...]))
         left.tree = self
         right.tree = self
         if node.parent == nil {
@@ -288,8 +293,6 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
             right.parent = root
             return
         }
-        left.parent = node.parent!
-        right.parent = node.parent!
         let (_, indexInParent) = node.parent!.keys.insertionIndex(value: key)
         insert(node: node.parent!,
                left: left,
