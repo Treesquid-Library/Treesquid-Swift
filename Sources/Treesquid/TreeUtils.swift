@@ -15,16 +15,34 @@ internal func traverse_(_ tree: Tree) -> String {
         return "" // Empty tree is empty!
     }
     
+    // The maximum number of children that a node can has:
     let nodeDegree: Double
+    // B-trees need to be handled a little bit differently, so they are
+    // marked here. In particular, `details` handles B-tree nodes properly,
+    // but `VoidNode`s need to be told that they are spanning multiple keys
+    // in a B-tree.
+    let isBTree: Bool
+    // Number of spaces to indent every line.
+    let indentWidth = 4
+    // Fixed-width of a node key. Either "ddd", where "d" is a digit, or
+    // "dd◻︎"/"dd◼︎" in the case of red/black trees.
+    // Note: Does not include separating space.
+    let detailsWidth = 3
+    // Fixed-width of a node and trailing white-space.
+    // Includes all keys and separators.
+    let nodeTextWidth: Int
+    
     if let tree = tree as? BTree<Int, Any> {
         nodeDegree = Double(tree.m + 1)
+        isBTree = true
+        nodeTextWidth = detailsWidth * Int(tree.m) + Int(tree.m)
     } else {
         nodeDegree = 2.0
+        isBTree = false
+        nodeTextWidth = detailsWidth + 1
     }
     
     var treeUnicodeArt = ""
-    let detailsWidth = 3 // Note: Does not include separating space.
-    let indentWidth = detailsWidth + 1 // Number of spaces to indent every line.
     let depth = tree.depth()
     let maxNodesAtBottom = pow(nodeDegree, Double(depth) - 1.0)
     let levelStack = levels(of: tree as! GenericTree, fillWithVoidNodes: true)
@@ -32,27 +50,36 @@ internal func traverse_(_ tree: Tree) -> String {
         let maxNodesInLevel = pow(nodeDegree, Double(levelIndex))
         treeUnicodeArt += String(repeating: " ", count: indentWidth)
         treeUnicodeArt += String(repeating: " ",
-                                 count: Int(Double(detailsWidth + 1) / 2.0 * (maxNodesAtBottom - maxNodesInLevel)))
+                                 count: Int(Double(nodeTextWidth) / 2.0 * (maxNodesAtBottom - maxNodesInLevel)))
         for nodeIndex in 0..<Int(maxNodesInLevel) {
             let needsSpaceSuffix = nodeIndex + 1 < Int(maxNodesInLevel) ? true : false
             let node = levelStack[levelIndex][nodeIndex]
             if levelIndex > 0 {
                 if node is VoidNode {
-                    treeUnicodeArt += String(repeating: "-", count: detailsWidth)
-                        + (needsSpaceSuffix ? " " : "")
+                    if isBTree {
+                        treeUnicodeArt += Array(repeating: String(repeating: "-",
+                                                                  count: detailsWidth),
+                                                count: Int((tree as! BTree<Int, Any>).m)).joined(separator: "•")
+                            + (needsSpaceSuffix ? " " : "")
+                        //treeUnicodeArt += String(repeating: "-", count: detailsWidth)
+                        //    + (needsSpaceSuffix ? " " : "")
+                    } else {
+                        treeUnicodeArt += String(repeating: "-", count: detailsWidth)
+                            + (needsSpaceSuffix ? " " : "")
+                    }
                 } else if let node = node as? BTreeNode<Int, Any> {
-                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix)
+                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
                 } else if let node = node as? RedBlackTreeNode<Int, Any> {
-                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix)
+                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
                 } else {
                     // TODO
                     treeUnicodeArt += "TODO"
                 }
             } else {
                 if let node = node as? BTreeNode<Int, Any> {
-                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix)
+                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
                 } else if let node = node as? RedBlackTreeNode<Int, Any> {
-                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix)
+                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
                 } else {
                     // TODO
                     treeUnicodeArt += "TODO"
@@ -66,12 +93,13 @@ internal func traverse_(_ tree: Tree) -> String {
     return treeUnicodeArt
 }
 
-func details(node: BTreeNode<Int, Any>, appendSpace: Bool) -> String {
-    let keysInNode = node.keys.map { "\(String(format: "%03d", $0))" }.joined(separator: "•")
+func details(node: BTreeNode<Int, Any>, appendSpace: Bool, detailsWidth: Int) -> String {
+    let fullNode: [Int] = node.keys + Array(repeating: Int.min, count: Int(node.tree!.m) - node.keys.count)
+    let keysInNode = fullNode.map {"\($0 == Int.min ? String(repeating: "-", count: detailsWidth) : String(format: "%03d", $0))" }.joined(separator: "•")
     return keysInNode + (appendSpace ? " " : "")
 }
 
-func details(node: RedBlackTreeNode<Int, Any>, appendSpace: Bool) -> String {
+func details(node: RedBlackTreeNode<Int, Any>, appendSpace: Bool, detailsWidth: Int) -> String {
     let color = node.red ? "◻︎" : "◼︎"
     return "\(String(format: "%02d", node.key))\(color)" + (appendSpace ? " " : "")
 }

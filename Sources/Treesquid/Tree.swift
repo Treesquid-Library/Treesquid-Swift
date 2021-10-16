@@ -252,7 +252,7 @@ fileprivate func levels(levelStack: inout [[GenericNode]], fillWithVoidNodes: Bo
         var allNodesAreVoid = true
         for node in deepestLevel {
             for childIndex in 0..<node.maxDegree() {
-                if childIndex < node.capacity() {
+                if childIndex < node.getChildren().count {
                     let child = node.child(at: childIndex)
                     if child != nil && !(child is VoidNode) {
                         nextLevel.append(child!)
