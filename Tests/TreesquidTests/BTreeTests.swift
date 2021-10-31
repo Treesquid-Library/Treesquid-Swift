@@ -3,6 +3,18 @@ import XCTest
 @testable import Treesquid
 
 final class BTreeTests: XCTestCase {
+    //
+    // Helper functions for testing:
+    //
+        
+    func validate(tree: BTree<Int, Any>, is reference: String) {
+        XCTAssert(traverse(tree) == reference, "Trees differ. Expected:\n\(reference)")
+    }
+
+    //
+    // Unit tests:
+    //
+    
     // Example from:
     // https://www.programiz.com/dsa/insertion-into-a-b-tree
     // (October 9th, 2021)
