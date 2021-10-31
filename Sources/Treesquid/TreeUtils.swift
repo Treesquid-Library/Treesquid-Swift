@@ -33,9 +33,9 @@ internal func traverse_(_ tree: Tree) -> String {
     let nodeTextWidth: Int
     
     if let tree = tree as? BTree<Int, Any> {
-        nodeDegree = Double(tree.m + 1)
+        nodeDegree = Double(tree.m)
         isBTree = true
-        nodeTextWidth = detailsWidth * Int(tree.m) + Int(tree.m)
+        nodeTextWidth = detailsWidth * Int(tree.m - 1) + Int(tree.m - 1)
     } else {
         nodeDegree = 2.0
         isBTree = false
@@ -59,7 +59,7 @@ internal func traverse_(_ tree: Tree) -> String {
                     if isBTree {
                         treeUnicodeArt += Array(repeating: String(repeating: "-",
                                                                   count: detailsWidth),
-                                                count: Int((tree as! BTree<Int, Any>).m)).joined(separator: "•")
+                                                count: Int((tree as! BTree<Int, Any>).m - 1)).joined(separator: "•")
                             + (needsSpaceSuffix ? " " : "")
                         //treeUnicodeArt += String(repeating: "-", count: detailsWidth)
                         //    + (needsSpaceSuffix ? " " : "")
@@ -94,7 +94,7 @@ internal func traverse_(_ tree: Tree) -> String {
 }
 
 func details(node: BTreeNode<Int, Any>, appendSpace: Bool, detailsWidth: Int) -> String {
-    let fullNode: [Int] = node.keys + Array(repeating: Int.min, count: Int(node.tree!.m) - node.keys.count)
+    let fullNode: [Int] = node.keys + Array(repeating: Int.min, count: Int(node.tree!.m - 1) - node.keys.count)
     let keysInNode = fullNode.map {"\($0 == Int.min ? String(repeating: "-", count: detailsWidth) : String(format: "%03d", $0))" }.joined(separator: "•")
     return keysInNode + (appendSpace ? " " : "")
 }

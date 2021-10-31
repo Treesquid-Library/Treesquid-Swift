@@ -17,7 +17,7 @@ final class RedBlackTreeTests: XCTestCase {
         .insert(node: RedBlackTreeNode(key: 80))
 
     //
-    // Functions for testing deletions:
+    // Helper functions for testing:
     //
         
     func validate(tree: RedBlackTree<Int, Any>, is reference: String) {
