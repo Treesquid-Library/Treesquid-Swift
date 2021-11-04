@@ -15,6 +15,44 @@ final class BTreeTests: XCTestCase {
     // Unit tests:
     //
     
+    func testNodeMerge() {
+        let tree = BTree<Int, Any>(m: 3)
+            .insert("1", forKey: 1)
+        print(traverse_(tree))
+        tree.insert("15", forKey: 15)
+        print(traverse_(tree))
+        tree.insert("3", forKey: 3)
+        print(traverse_(tree))
+        tree.insert("14", forKey: 14)
+        print(traverse_(tree))
+        tree.insert("5", forKey: 5)
+        print(traverse_(tree))
+        tree.insert("13", forKey: 13)
+        print(traverse_(tree))
+        tree.insert("7", forKey: 7)
+        print(traverse_(tree))
+        tree.insert("8", forKey: 8)
+        print(traverse_(tree))
+        tree.insert("9", forKey: 9)
+        print(traverse_(tree))
+        tree.insert("10", forKey: 10)
+        print(traverse_(tree))
+        tree.insert("11", forKey: 11)
+        print(traverse_(tree))
+        tree.insert("12", forKey: 12)
+        print(traverse_(tree))
+        tree.insert("6", forKey: 6)
+        print(traverse_(tree))
+        tree.insert("4", forKey: 4)
+        print(traverse_(tree))
+        tree.insert("2", forKey: 2)
+        print(traverse_(tree))
+        tree.delete(withKey: 10) // leaf
+        print(traverse_(tree))
+        tree.delete(withKey: 14) // internal
+        print(traverse_(tree))
+    }
+    
     // Example from:
     // https://www.programiz.com/dsa/insertion-into-a-b-tree
     // (October 9th, 2021)

@@ -118,7 +118,10 @@ public class BTreeNode<Key: Comparable, Value>: KeyArrayNode, GenericNode {
     }
     
     internal func indexIn(parent: Node) -> Int {
-        return parent.children[0] === self ? 0 : 1
+        for (index, child) in parent.children.enumerated() {
+            if child === self { return index }
+        }
+        return -1
     }
 }
 
@@ -189,6 +192,8 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
         return Treesquid.depth(of: self)
     }
     
+    internal var m2: Int { get { Int(ceil(Float(m) / 2)) } }
+    
     //
     // Tree access
     //
@@ -212,8 +217,11 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     // Removes the node with the matching key. If no node with a matching
     // key is found, then the tree is not being altered.
     @discardableResult
-    func delete(key: Key) -> Tree {
-        // TODO
+    func delete(withKey: Key) -> Tree {
+        guard let root = root else { return self }
+        let (node, index) = findForDelete(node: root, key: withKey)
+        guard let node = node else { return self }
+        delete(node: node, at: index)
         return self
     }
     
@@ -266,6 +274,14 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
         if child == nil { return (node, insertionIndex) }
         return findForUpdate(node: child!, key: key)
     }
+    
+    func findForDelete(node: Node, key: Key) -> (Node?, Int) {
+        let (hasKey, insertionIndex) = node.keys.insertionPoint(value: key)
+        if hasKey { return (node, insertionIndex) }
+        let child = node.children[insertionIndex]
+        if child == nil { return (nil, insertionIndex) }
+        return findForDelete(node: child!, key: key)
+    }
 
     // Note: For `direction`, see the note on `RedBlackTreeNote` about
     //       why enumerations are not used.
@@ -309,14 +325,119 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
                at: indexInParent)
     }
     
-    @discardableResult
-    func delete(node: Node) -> Tree {
-        // TODO
-        return self
+    func delete(node: Node, at index: Int) {
+        let isLeaf = node.children.reduce(true, { rollover, child in rollover && child == nil })
+        if isLeaf {
+            node.keys.remove(at: index)
+            node.values.remove(at: index)
+            node.children.remove(at: index)
+            if node.children.count >= m2 {
+                // Enough keys left. Needs to be tested here for special case "root node".
+                return
+            }
+            if node === root {
+                // Special case: root node!
+                if node.keys.isEmpty {
+                    root = nil
+                    return
+                }
+                return
+            }
+            if node.children.count >= m2 {
+                // Enough keys left:
+                return
+            }
+            // Here there are fewer than ceil(m / 2) children in the node left (underflow):
+            handleUnderflow(node)
+            return
+        }
+        let inOrderPredecessorNode = findInOrderPredecessorNode(node.children.first!!)
+        let inOrderPredecessorKey = inOrderPredecessorNode.keys.removeLast()
+        let inOrderPredecessorValue = inOrderPredecessorNode.values.removeLast()
+        inOrderPredecessorNode.children.removeLast()
+        node.keys[index] = inOrderPredecessorKey
+        node.values[index] = inOrderPredecessorValue
+        if inOrderPredecessorNode.children.count >= 2 {
+            return
+        }
+        // In-order predecessor node has fewer than ceil(m / 2) children left now (underflow):
+        handleUnderflow(inOrderPredecessorNode)
     }
     
-    func deleteLeaf(node deleteNode: Node) throws -> Tree {
-        // TODO
-        return self
+    internal func handleUnderflow(_ node: Node) {
+        let (indexInParent, fullestSibling, direction) = findFullestSibling(node)
+        if fullestSibling.children.count > m2 {
+            // Transfer nodes:
+            if direction == 1 {
+                node.keys.append(node.parent!.keys[indexInParent])
+                node.values.append(node.parent!.values[indexInParent])
+                node.children.append(fullestSibling.children.removeFirst())
+                node.parent!.keys[indexInParent] = fullestSibling.keys.removeFirst()
+                node.parent!.values[indexInParent] = fullestSibling.values.removeFirst()
+            } else {
+                node.keys.insert(node.parent!.keys[indexInParent - 1], at: 0)
+                node.values.insert(node.parent!.values[indexInParent - 1], at: 0)
+                node.children.insert(fullestSibling.children.removeLast(), at: 0)
+                node.parent!.keys[indexInParent - 1] = fullestSibling.keys.removeLast()
+                node.parent!.values[indexInParent - 1] = fullestSibling.values.removeLast()
+            }
+            return
+        }
+        // Merge nodes:
+        let mergedNode: BTreeNode<Key, Value>
+        if direction == 1 {
+            let mergedKeys = node.keys + [node.parent!.keys.remove(at: indexInParent)] + fullestSibling.keys
+            let mergedValues = node.values + [node.parent!.values.remove(at: indexInParent)] + fullestSibling.values
+            let mergedChildren = node.children + fullestSibling.children
+            node.parent!.children.remove(at: indexInParent)
+            node.parent!.children.remove(at: indexInParent)
+            mergedNode = BTreeNode(keys: mergedKeys, values: mergedValues, children: mergedChildren, tree: self)
+        } else {
+            let mergedKeys = fullestSibling.keys + [node.parent!.keys.remove(at: indexInParent - 1)] + node.keys
+            let mergedValues = fullestSibling.values + [node.parent!.values.remove(at: indexInParent - 1)] + node.values
+            let mergedChildren = fullestSibling.children + node.children
+            node.parent!.children.remove(at: indexInParent - 1)
+            node.parent!.children.remove(at: indexInParent - 1)
+            mergedNode = BTreeNode(keys: mergedKeys, values: mergedValues, children: mergedChildren, tree: self)
+        }
+        if node.parent === root {
+            // Parent is the root node, which might be empty now. Check for that...
+            if node.parent!.keys.count == 0 {
+                root = mergedNode
+                return
+            }
+            node.children.insert(mergedNode, at: direction == 1 ? indexInParent : indexInParent - 1)
+            return
+        }
+        node.parent!.children.insert(mergedNode, at: direction == 1 ? indexInParent : indexInParent - 1)
+        if node.parent!.children.count < m2 {
+            // New underflow in parent:
+            handleUnderflow(node.parent!)
+        }
+    }
+
+    internal func findFullestSibling(_ node: Node) -> (Int, Node, Int) {
+        // Find fullest sibling:
+        let indexInParent = node.indexInParent()
+        let leftSibling = indexInParent > 0 ? node.parent!.children[indexInParent - 1] : nil
+        let rightSibling = indexInParent < node.parent!.children.count - 1 ? node.parent!.children[indexInParent + 1] : nil
+        if leftSibling == nil {
+            return (indexInParent, rightSibling!, 1)
+        } else if rightSibling == nil {
+            return (indexInParent, leftSibling!, -1)
+        } else {
+            if leftSibling!.keys.count >= rightSibling!.keys.count {
+                return (indexInParent, leftSibling!, -1)
+            } else {
+                return (indexInParent, rightSibling!, 1)
+            }
+        }
+    }
+    
+    internal func findInOrderPredecessorNode(_ node: Node) -> Node {
+        guard let rightMostChild = node.children.last! else {
+            return node
+        }
+        return findInOrderPredecessorNode(rightMostChild)
     }
 }
