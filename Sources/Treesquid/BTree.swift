@@ -219,8 +219,8 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     @discardableResult
     func delete(withKey: Key) -> Tree {
         guard let root = root else { return self }
-        let (node, index) = findForDelete(node: root, key: withKey)
-        guard let node = node else { return self }
+        let (potentialNode, index) = findForDelete(node: root, key: withKey)
+        guard let node = potentialNode else { return self }
         delete(node: node, at: index)
         return self
     }
