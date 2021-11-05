@@ -113,6 +113,7 @@ public class BTreeNode<Key: Comparable, Value>: KeyArrayNode, GenericNode {
     //
     // Private helpers for calculating siblings and nephews.
     //
+    
     internal func indexInParent() -> Int {
         return indexIn(parent: parent!)
     }
