@@ -59,7 +59,7 @@ internal func traverse_(_ tree: Tree) -> String {
                     if isBTree {
                         treeUnicodeArt += Array(repeating: String(repeating: "-",
                                                                   count: detailsWidth),
-                                                count: Int((tree as! BTree<Int, Any>).m - 1)).joined(separator: "•")
+                                                count: Int((tree as! BTree<Int, Any>).m - 1)).joined(separator: "◦")
                             + (needsSpaceSuffix ? " " : "")
                         //treeUnicodeArt += String(repeating: "-", count: detailsWidth)
                         //    + (needsSpaceSuffix ? " " : "")
