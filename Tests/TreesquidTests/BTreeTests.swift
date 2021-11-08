@@ -11,6 +11,41 @@ final class BTreeTests: XCTestCase {
         XCTAssert(traverse(tree) == reference, "Trees differ. Expected:\n\(reference)")
     }
 
+    func traverseBTreeNode(_ node: BTreeNode<Int, Any>, _ minExpectedChildren: Int, _ level: Int, _ leafLevels: inout [Int]) {
+        XCTAssertGreaterThanOrEqual(node.keys.count,
+                                    minExpectedChildren - 1,
+                                    "Node has \(node.keys.count) keys. Expected at least: \(minExpectedChildren - 1).")
+        XCTAssertEqual(node.keys.count,
+                       node.values.count,
+                       "Node has \(node.values.count) values, but \(node.keys.count) keys. Expected then to be equal.")
+        let nonNilChildren = node.children.reduce(0, { nonNilCount, child in nonNilCount + (child == nil ? 0 : 1) })
+        if (nonNilChildren == 0) {
+            // A leaf:
+            leafLevels.append(level)
+            return
+        }
+        // Not a leaf:
+        XCTAssertGreaterThanOrEqual(nonNilChildren,
+                                    minExpectedChildren,
+                                    "Node has \(nonNilChildren) children. Expected at least: \(minExpectedChildren).")
+        for child in node.children {
+            if child != nil {
+                traverseBTreeNode(child!, Int(ceil(Float(node.tree!.m) / 2)), level + 1, &leafLevels)
+            }
+        }
+    }
+    
+    // Assumes that the value is "\(key)". Needed to make sure that values
+    // are rotated properly alongside their keys.
+    func checkBTreeProperties(_ tree: BTree<Int, Any>) {
+        guard let root = tree.root else { return }
+        print(traverse_(tree))
+        var leafLevels: [Int] = []
+        traverseBTreeNode(root, 0, 0, &leafLevels)
+        let leafLevelsConcur =  Set(leafLevels).count == 1
+        XCTAssertTrue(leafLevelsConcur, "Leaves on different levels: \(leafLevels).")
+    }
+    
     //
     // Unit tests:
     //

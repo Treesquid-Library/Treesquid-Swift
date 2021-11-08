@@ -171,9 +171,9 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     typealias Node = BTreeNode<Key, Value>
 
     var root: Node?
-    private(set) public var m: UInt
+    private(set) public var m: Int
     
-    public init(m: UInt) {
+    public init(m: Int) {
         self.m = m
     }
     
