@@ -96,7 +96,7 @@ public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode, GenericNode {
     internal func append(_ child: Node) throws -> Node {
         for childIndex in 0..<children.count {
             if children[childIndex] == nil {
-                child.parent = self;
+                child.parent = self
                 children[childIndex] = child
                 return self
             }

@@ -7,7 +7,7 @@ extension Array where Element: Comparable {
         var upperIndex = count
         var middleIndex = lowerIndex + (upperIndex - lowerIndex) / 2
         var valueAtMiddle = self[middleIndex]
-        while lowerIndex < upperIndex {
+        while lowerIndex <= upperIndex {
             if valueAtMiddle < value {
                 lowerIndex = middleIndex + 1
             } else if valueAtMiddle > value {
@@ -48,6 +48,6 @@ extension Array where Element: Comparable {
             valueAtMiddle = self[middleIndex]
         }
         // Note: middleIndex + 1 might be array.count (an index beyond the array).
-        return (false, valueAtMiddle < value ? middleIndex + 1 : Swift.max(middleIndex - 1, 0))
+        return (false, valueAtMiddle < value ? middleIndex + 1 : middleIndex)
     }
 }

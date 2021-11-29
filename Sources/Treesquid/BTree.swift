@@ -15,21 +15,21 @@ public class BTreeNode<Key: Comparable, Value>: KeyArrayNode, GenericNode {
     internal convenience init(keys: [Key]) {
         self.init(keys: keys,
                   values: Array(repeating: nil, count: keys.count) as [Value?],
-                  children: Array(repeating: nil, count: keys.count) as [BTreeNode?],
+                  children: Array(repeating: nil, count: keys.count > 0 ? keys.count + 1 : 0) as [BTreeNode?],
                   tree: nil)
     }
     
     internal convenience init(keys: [Key], values: [Value?]) {
         self.init(keys: keys,
                   values: Array(repeating: nil, count: keys.count) as [Value?],
-                  children: Array(repeating: nil, count: keys.count) as [BTreeNode?],
+                  children: Array(repeating: nil, count: keys.count > 0 ? keys.count + 1 : 0) as [BTreeNode?],
                   tree: nil)
     }
 
     internal convenience init(keys: [Key], values: [Value?], children: [BTreeNode?]) {
         self.init(keys: keys,
                   values: Array(repeating: nil, count: keys.count) as [Value?],
-                  children: Array(repeating: nil, count: keys.count) as [BTreeNode?],
+                  children: Array(repeating: nil, count: keys.count > 0 ? keys.count + 1 : 0) as [BTreeNode?],
                   tree: nil)
     }
     
@@ -40,7 +40,7 @@ public class BTreeNode<Key: Comparable, Value>: KeyArrayNode, GenericNode {
         self.tree = tree
         
         // Overwrite parent for child nodes.
-        self.children.forEach { child in child?.parent = self }
+        self.children.forEach { child in child!.parent = self }
     }
     
     //
@@ -193,7 +193,8 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
         return Treesquid.depth(of: self)
     }
     
-    internal var m2: Int { get { Int(ceil(Float(m) / 2)) } }
+    internal var minChildren: Int { get { Int(ceil(Float(m) / 2)) } }
+    internal var minKeys: Int { get { Int(ceil(Float(m) / 2)) - 1 } }
     
     //
     // Tree access
@@ -202,7 +203,7 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     @discardableResult
     func insert(_ value: Value, forKey: Key) -> Tree {
         guard let root = root else {
-            self.root = BTreeNode(keys: [forKey], values: [value], children: [nil, nil], tree: self)
+            self.root = BTreeNode(keys: [forKey], values: [value], children: [], tree: self)
             return self
         }
         let (node, index) = findForUpdate(node: root, key: forKey)
@@ -271,17 +272,16 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     func findForUpdate(node: Node, key: Key) -> (Node, Int) {
         let (hasKey, insertionIndex) = node.keys.insertionPoint(value: key)
         if hasKey { return (node, insertionIndex) }
-        let child = node.children[insertionIndex]
-        if child == nil { return (node, insertionIndex) }
-        return findForUpdate(node: child!, key: key)
+        if node.children.count == 0 { return (node, insertionIndex) }
+        // if insertionIndex > node.children.count { return (node, insertionIndex) }
+        return findForUpdate(node: node.children[insertionIndex]!, key: key)
     }
     
     func findForDelete(node: Node, key: Key) -> (Node?, Int) {
         let (hasKey, insertionIndex) = node.keys.insertionPoint(value: key)
         if hasKey { return (node, insertionIndex) }
-        let child = node.children[insertionIndex]
-        if child == nil { return (nil, insertionIndex) }
-        return findForDelete(node: child!, key: key)
+        if node.children.count == 0 { return (nil, insertionIndex) }
+        return findForDelete(node: node.children[insertionIndex]!, key: key)
     }
 
     // Note: For `direction`, see the note on `RedBlackTreeNote` about
@@ -295,19 +295,23 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     func insert(node: Node, left: Node?, right: Node?, key: Key, value: Value?, at index: Int) {
         node.keys.insert(key, at: index)
         node.values.insert(value, at: index)
-        node.children.insert(left, at: index)
-        node.children[index + 1] = right
-        left?.parent = node
-        right?.parent = node
+        if left != nil || right != nil {
+            node.children.insert(left, at: index)
+            node.children[index + 1] = right
+            left?.parent = node
+            right?.parent = node
+        }
         if node.keys.count <= m - 1 { return }
         let splitIndex = node.keys.count / 2
+        let childrenLeft = node.children.count > 0 ? Array(node.children[...splitIndex]) : []
+        let childrenRight = node.children.count > 0 ? Array(node.children[(splitIndex + 1)...]) : []
         let splitLeft = BTreeNode(keys: Array(node.keys[..<splitIndex]),
                                   values: Array(node.values[..<splitIndex]),
-                                  children: Array(node.children[...splitIndex]),
+                                  children: childrenLeft,
                                   tree: self)
         let splitRight = BTreeNode(keys: Array(node.keys[(splitIndex + 1)...]),
                                    values: Array(node.values[(splitIndex + 1)...]),
-                                   children: Array(node.children[(splitIndex + 1)...]),
+                                   children: childrenRight,
                                    tree: self)
         if node.parent == nil {
             // We are at the root!
@@ -317,8 +321,9 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
                              tree: self)
             return
         }
-        let (_, indexInParent) = node.parent!.keys.insertionPoint(value: key)
-        insert(node: node.parent!,
+        let parentNode = node.parent!
+        let (_, indexInParent) = parentNode.keys.insertionPoint(value: key)
+        insert(node: parentNode,
                left: splitLeft,
                right: splitRight,
                key: node.keys[splitIndex],
@@ -327,24 +332,17 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     }
     
     func delete(node: Node, at index: Int) {
-        let isLeaf = node.children.reduce(true, { rollover, child in rollover && child == nil })
-        if isLeaf {
+        if node.children.count == 0 {
             node.keys.remove(at: index)
             node.values.remove(at: index)
-            node.children.remove(at: index)
-            if node.children.count >= m2 {
-                // Enough keys left. Needs to be tested here for special case "root node".
-                return
-            }
             if node === root {
                 // Special case: root node!
                 if node.keys.isEmpty {
                     root = nil
-                    return
                 }
                 return
             }
-            if node.children.count >= m2 {
+            if node.keys.count >= minKeys {
                 // Enough keys left:
                 return
             }
@@ -352,13 +350,16 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
             handleUnderflow(node)
             return
         }
-        let inOrderPredecessorNode = findInOrderPredecessorNode(node.children.first!!)
+        // TODO: Find both predecessor and successor, then delete from whichever is fuller.
+        let inOrderPredecessorNode = findInOrderPredecessorNode(node.children[index]!)
         let inOrderPredecessorKey = inOrderPredecessorNode.keys.removeLast()
         let inOrderPredecessorValue = inOrderPredecessorNode.values.removeLast()
-        inOrderPredecessorNode.children.removeLast()
+        if inOrderPredecessorNode.children.count > 0 {
+            inOrderPredecessorNode.children.removeLast()
+        }
         node.keys[index] = inOrderPredecessorKey
         node.values[index] = inOrderPredecessorValue
-        if inOrderPredecessorNode.children.count >= 2 {
+        if inOrderPredecessorNode.keys.count >= minKeys {
             return
         }
         // In-order predecessor node has fewer than ceil(m / 2) children left now (underflow):
@@ -367,18 +368,26 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     
     internal func handleUnderflow(_ node: Node) {
         let (indexInParent, fullestSibling, direction) = findFullestSibling(node)
-        if fullestSibling.children.count > m2 {
-            // Transfer nodes:
+        if fullestSibling.keys.count > minKeys {
+            // Transfer 1x (key, value, child) from sibling:
             if direction == 1 {
                 node.keys.append(node.parent!.keys[indexInParent])
                 node.values.append(node.parent!.values[indexInParent])
-                node.children.append(fullestSibling.children.removeFirst())
+                if node.children.count > 0 {
+                    let transferredChild = fullestSibling.children.removeFirst()!
+                    transferredChild.parent = node
+                    node.children.append(transferredChild)
+                }
                 node.parent!.keys[indexInParent] = fullestSibling.keys.removeFirst()
                 node.parent!.values[indexInParent] = fullestSibling.values.removeFirst()
             } else {
                 node.keys.insert(node.parent!.keys[indexInParent - 1], at: 0)
                 node.values.insert(node.parent!.values[indexInParent - 1], at: 0)
-                node.children.insert(fullestSibling.children.removeLast(), at: 0)
+                if node.children.count > 0 {
+                    let transferredChild = fullestSibling.children.removeLast()!
+                    transferredChild.parent = node
+                    node.children.insert(transferredChild, at: 0)
+                }
                 node.parent!.keys[indexInParent - 1] = fullestSibling.keys.removeLast()
                 node.parent!.values[indexInParent - 1] = fullestSibling.values.removeLast()
             }
@@ -407,11 +416,13 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
                 root = mergedNode
                 return
             }
-            node.children.insert(mergedNode, at: direction == 1 ? indexInParent : indexInParent - 1)
+            mergedNode.parent = node.parent
+            node.parent!.children.insert(mergedNode, at: direction == 1 ? indexInParent : indexInParent - 1)
             return
         }
+        mergedNode.parent = node.parent
         node.parent!.children.insert(mergedNode, at: direction == 1 ? indexInParent : indexInParent - 1)
-        if node.parent!.children.count < m2 {
+        if node.parent!.keys.count < minKeys {
             // New underflow in parent:
             handleUnderflow(node.parent!)
         }
@@ -436,7 +447,11 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     }
     
     internal func findInOrderPredecessorNode(_ node: Node) -> Node {
+        if node.children.count == 0 { return node }
         guard let rightMostChild = node.children.last! else {
+            return node
+        }
+        if rightMostChild.keys.count == 0 {
             return node
         }
         return findInOrderPredecessorNode(rightMostChild)

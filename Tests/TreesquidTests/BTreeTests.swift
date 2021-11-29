@@ -11,35 +11,56 @@ final class BTreeTests: XCTestCase {
         XCTAssert(traverse(tree) == reference, "Trees differ. Expected:\n\(reference)")
     }
 
-    func traverseBTreeNode(_ node: BTreeNode<Int, Any>, _ minExpectedChildren: Int, _ level: Int, _ leafLevels: inout [Int]) {
+    func traverseBTreeNode(_ node: BTreeNode<Int, Any>, _ minExpectedKeys: Int, _ level: Int, _ leafLevels: inout [Int]) {
         XCTAssertGreaterThanOrEqual(node.keys.count,
-                                    minExpectedChildren - 1,
-                                    "Node has \(node.keys.count) keys. Expected at least: \(minExpectedChildren - 1).")
+                                    minExpectedKeys,
+                                    "Node has \(node.keys.count) keys. Expected at least: \(minExpectedKeys).")
         XCTAssertEqual(node.keys.count,
                        node.values.count,
                        "Node has \(node.values.count) values, but \(node.keys.count) keys. Expected then to be equal.")
-        let nonNilChildren = node.children.reduce(0, { nonNilCount, child in nonNilCount + (child == nil ? 0 : 1) })
-        if (nonNilChildren == 0) {
-            // A leaf:
-            leafLevels.append(level)
+        XCTAssertEqual(node.keys,
+                       node.keys.sorted(),
+                       "Node keys are not sorted: \(node.keys).")
+        if node.children.count > 0 {
+            // Not a leaf:
+            XCTAssertEqual(node.keys.count + 1,
+                           node.children.count,
+                           "Keys: \(node.keys.count). Children: \(node.children.count). Expected children to be keys + 1.")
+            if type(of: node.keys.first!) == String.self {
+                for (key, index) in node.keys.enumerated() {
+                    XCTAssertEqual("\(key)",
+                                   node.values[index] as! String,
+                                   "Node key and string-value mismatch at index \(index).")
+                }
+            }
+            for (index, child) in node.children.enumerated() {
+                if index < node.keys.count {
+                    XCTAssertLessThan(node.children[index]!.keys.last!,
+                                      node.keys[index],
+                                      "B-tree property violated. Child key too large.")
+                } else {
+                    XCTAssertGreaterThan(node.children[index]!.keys.first!,
+                                         node.keys.last!,
+                                         "B-tree property violated. Child key too small.")
+                }
+                XCTAssertTrue(child?.parent === node, "Child's `parent` is pointing to a different node.")
+                traverseBTreeNode(child!, Int(ceil(Float(node.tree!.m) / 2)) - 1, level + 1, &leafLevels)
+            }
             return
         }
-        // Not a leaf:
-        XCTAssertGreaterThanOrEqual(nonNilChildren,
-                                    minExpectedChildren,
-                                    "Node has \(nonNilChildren) children. Expected at least: \(minExpectedChildren).")
-        for child in node.children {
-            if child != nil {
-                traverseBTreeNode(child!, Int(ceil(Float(node.tree!.m) / 2)), level + 1, &leafLevels)
-            }
-        }
+
+        // A leaf:
+        XCTAssertEqual(node.children.count,
+                       0,
+                       "Children: \(node.children.count). Expected them to be zero (leaf node).")
+        leafLevels.append(level)
+        return
     }
     
     // Assumes that the value is "\(key)". Needed to make sure that values
     // are rotated properly alongside their keys.
     func checkBTreeProperties(_ tree: BTree<Int, Any>) {
         guard let root = tree.root else { return }
-        print(traverse_(tree))
         var leafLevels: [Int] = []
         traverseBTreeNode(root, 0, 0, &leafLevels)
         let leafLevelsConcur =  Set(leafLevels).count == 1
@@ -93,35 +114,35 @@ final class BTreeTests: XCTestCase {
         let tree = BTree<Int, Any>(m: 3)
         let node5 = BTreeNode<Int, Any>(keys: [5],
                                         values: ["5"],
-                                        children: [nil, nil],
+                                        children: [],
                                         tree: tree)
         let node15 = BTreeNode<Int, Any>(keys: [15],
                                          values: ["15"],
-                                         children: [nil, nil],
+                                         children: [],
                                          tree: tree)
         let node25_28 = BTreeNode<Int, Any>(keys: [25, 28],
                                             values: ["25", "28"],
-                                            children: [nil, nil, nil],
+                                            children: [],
                                             tree: tree)
         let node31_32 = BTreeNode<Int, Any>(keys: [31, 32],
                                             values: ["31", "32"],
-                                            children: [nil, nil, nil],
+                                            children: [],
                                             tree: tree)
         let node35 = BTreeNode<Int, Any>(keys: [35],
                                          values: ["35"],
-                                         children: [nil, nil],
+                                         children: [],
                                          tree: tree)
         let node45 = BTreeNode<Int, Any>(keys: [45],
                                          values: ["45"],
-                                         children: [nil, nil],
+                                         children: [],
                                          tree: tree)
         let node55 = BTreeNode<Int, Any>(keys: [55],
                                          values: ["55"],
-                                         children: [nil, nil],
+                                         children: [],
                                          tree: tree)
         let node65 = BTreeNode<Int, Any>(keys: [65],
                                          values: ["65"],
-                                         children: [nil, nil],
+                                         children: [],
                                          tree: tree)
         let node10 = BTreeNode<Int, Any>(keys: [10],
                                          values: ["10"],
@@ -163,5 +184,32 @@ final class BTreeTests: XCTestCase {
                             010•--- 033•--- 050•066
     005•--- 015•--- ---◦--- 025•028 035•--- ---◦--- 045•--- 055•--- 065•---
 """)
+    }
+    
+    func testRandomTesting() {
+        for m in [3, 4, 5, 11, 12] {
+            for seed in [8271, 99001873, 3, 12349] {
+                srand48(seed)
+                for nodes in [1, 2, 3, 4, 5, 6, 7, 100, 2000] {
+                    var availableKeys = Array(0..<nodes)
+                    var insert_keys: [Int] = []
+                    var delete_keys: [Int] = []
+                    while !availableKeys.isEmpty {
+                        let key = availableKeys.remove(at: Int(drand48() * Double(availableKeys.count - 1)))
+                        insert_keys.append(key)
+                        delete_keys.insert(key, at: Int(drand48() * Double(delete_keys.count)))
+                    }
+                    let tree = BTree<Int, Any>(m: m)
+                    for key in insert_keys {
+                        tree.insert("\(key)", forKey: key)
+                        checkBTreeProperties(tree)
+                    }
+                    for key in delete_keys {
+                        tree.delete(withKey: key)
+                        checkBTreeProperties(tree)
+                    }
+                }
+            }
+        }
     }
 }
