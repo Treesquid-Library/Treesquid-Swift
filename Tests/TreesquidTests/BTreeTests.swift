@@ -110,7 +110,7 @@ final class BTreeTests: XCTestCase {
     // Includes a correction for the third depicted tree, which has two duplicate 45 nodes on the web-site.
     // This is a typo on their end. The leftmost 45 is supposed to be a 35.
     // (November 4th, 2021)
-    func testNodeMerge() {
+    func testProgramizTreeDeletion() {
         let tree = BTree<Int, Any>(m: 3)
         let node5 = BTreeNode<Int, Any>(keys: [5],
                                         values: ["5"],
@@ -183,6 +183,40 @@ final class BTreeTests: XCTestCase {
                                     020•040
                             010•--- 033•--- 050•066
     005•--- 015•--- ---◦--- 025•028 035•--- ---◦--- 045•--- 055•--- 065•---
+""")
+    }
+
+    // Example from:
+    // https://www.cpp.edu/~ftang/courses/CS241/notes/b-tree.htm
+    // (December 5th, 2021)
+    func testCPPTree() {
+        let treeCPPTree = BTree<Int, Any>(m: 3)
+        validate(tree: treeCPPTree.insert("4", forKey: 4), is: """
+    004•---
+""")
+        validate(tree: treeCPPTree.insert("6", forKey: 6), is: """
+    004•006
+""")
+        validate(tree: treeCPPTree.insert("12", forKey: 12), is: """
+            006•---
+    004•--- 012•--- ---◦---
+""")
+        validate(tree: treeCPPTree.insert("17", forKey: 17), is: """
+            006•---
+    004•--- 012•017 ---◦---
+""")
+        validate(tree:         treeCPPTree.insert("19", forKey: 19), is: """
+            006•017
+    004•--- 012•--- 019•---
+""")
+        validate(tree: treeCPPTree.insert("22", forKey: 22), is: """
+            006•017
+    004•--- 012•--- 019•022
+""")
+        validate(tree: treeCPPTree.insert("18", forKey: 18), is: """
+                                    017•---
+                            006•--- 019•--- ---◦---
+    004•--- 012•--- ---◦--- 018•--- 022•--- ---◦--- ---◦--- ---◦--- ---◦---
 """)
     }
     
