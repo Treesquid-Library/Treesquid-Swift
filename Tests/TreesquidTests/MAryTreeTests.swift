@@ -11,7 +11,7 @@ final class MAryTreeTests: XCTestCase {
         .insert(node: MAryTreeNode(value: "lr3"))
         .insert(node: MAryTreeNode(value: "rl3"))
         .insert(node: MAryTreeNode(value: "rr3"))
-    static let treeTernaryTreeM: UInt = 3
+    static let treeTernaryTreeM: Int = 3
     static let treeTernaryTree = MAryTree<Int>(m: treeTernaryTreeM)
         .insert(node: MAryTreeNode(value: 100))
         .insert(node: MAryTreeNode(value: 200))

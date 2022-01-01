@@ -96,7 +96,7 @@ public class GeneralTree<Value>: MutableTree, GenericTree {
     
     @discardableResult
     public func insert(node: Node) -> Tree {
-        return Treesquid.insert(within: self, newNode: node, maxDegree: UInt.max) as! Tree
+        return Treesquid.insert(within: self, newNode: node, maxDegree: Int.max) as! Tree
     }
     
     func levels() -> [[Node]] {
@@ -116,6 +116,6 @@ public class GeneralTree<Value>: MutableTree, GenericTree {
     }
     
     func insert(node: GenericNode) -> Any {
-        return Treesquid.insert(within: self, newNode: node, maxDegree: UInt.max)
+        return Treesquid.insert(within: self, newNode: node, maxDegree: Int.max)
     }
 }

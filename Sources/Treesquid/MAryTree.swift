@@ -84,9 +84,9 @@ public class MAryTree<Value>: MutableTree, GenericTree {
     public typealias Node = MAryTreeNode<Value>
     
     private(set) public var root: Node?
-    private(set) public var m: UInt
+    private(set) public var m: Int
 
-    public init(m: UInt) {
+    public init(m: Int) {
         self.m = m
     }
     

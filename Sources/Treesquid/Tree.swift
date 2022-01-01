@@ -280,7 +280,7 @@ fileprivate func levels(levelStack: inout [[GenericNode]], fillWithVoidNodes: Bo
     return levels(levelStack: &levelStack, fillWithVoidNodes: fillWithVoidNodes)
 }
 
-internal func insert(within tree: GenericTree, newNode: GenericNode, maxDegree: UInt) -> GenericTree {
+internal func insert(within tree: GenericTree, newNode: GenericNode, maxDegree: Int) -> GenericTree {
     if tree.isEmpty() {
         tree.setRoot(newNode)
         return tree
@@ -293,7 +293,7 @@ internal func insert(within tree: GenericTree, newNode: GenericNode, maxDegree: 
                   maxDegree: maxDegree)
 }
     
-fileprivate func insert(within tree: GenericTree, newNode: GenericNode, depth: Int, level: [GenericNode], maxDegree: UInt) -> GenericTree {
+fileprivate func insert(within tree: GenericTree, newNode: GenericNode, depth: Int, level: [GenericNode], maxDegree: Int) -> GenericTree {
     var nextLevel: [GenericNode] = []
     for node in level {
         if node.degree() == 0 {
