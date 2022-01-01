@@ -140,28 +140,69 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
     }
 }
 
-public class BinaryTree<Value>: GenericTree {
+public struct BinaryTreeIterator<Value>: IteratorProtocol {
+    var nodeStack = Array<BinaryTreeNode<Value>>()
+
+    init(_ tree: BinaryTree<Value>) {
+        guard let root = tree.root else { return }
+        findLeftmostNode(node: root)
+    }
+
+    mutating public func next() -> BinaryTreeNode<Value>? {
+        guard let node = nodeStack.popLast() else {
+            return nil
+        }
+
+        guard let rightChild = node.child(at: 1) else {
+            return node
+        }
+
+        findLeftmostNode(node: rightChild as! Element)
+
+        return node
+    }
+
+    mutating private func findLeftmostNode(node: Element) {
+        nodeStack.append(node)
+
+        guard let leftChild = node.child(at: 0) else {
+            return
+        }
+
+        findLeftmostNode(node: leftChild as! Element)
+    }
+}
+
+public class BinaryTree<Value>: Tree, GenericTree, Sequence {
     typealias Tree = BinaryTree<Value>
     typealias Node = BinaryTreeNode<Value>
 
     var root: Node?
     
-    func isEmpty() -> Bool {
+    public func isEmpty() -> Bool {
         return root == nil
     }
     
-    func width() -> Int {
+    public func width() -> Int {
         return Treesquid.width(of: self)
     }
     
-    func count() -> Int {
+    public func count() -> Int {
         return Treesquid.count(of: self)
     }
     
-    func depth() -> Int {
+    public func depth() -> Int {
         return Treesquid.depth(of: self)
     }
-    
+
+    //
+    // Iterator support
+    //
+
+    public func makeIterator() -> BinaryTreeIterator<Value> {
+        return BinaryTreeIterator<Value>(self)
+    }
+
     //
     // Tree access
     //

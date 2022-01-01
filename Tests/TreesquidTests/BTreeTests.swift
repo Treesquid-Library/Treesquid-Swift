@@ -205,7 +205,7 @@ final class BTreeTests: XCTestCase {
             006•---
     004•--- 012•017 ---◦---
 """)
-        validate(tree:         treeCPPTree.insert("19", forKey: 19), is: """
+        validate(tree: treeCPPTree.insert("19", forKey: 19), is: """
             006•017
     004•--- 012•--- 019•---
 """)

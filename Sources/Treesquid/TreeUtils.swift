@@ -1,5 +1,9 @@
 import Foundation
 
+public func traverse(_ tree: BinaryTree<Int>) -> String {
+    return traverse_(tree)
+}
+
 public func traverse(_ tree: BTree<Int, Any>) -> String {
     return traverse_(tree)
 }
@@ -67,6 +71,8 @@ internal func traverse_(_ tree: Tree) -> String {
                         treeUnicodeArt += String(repeating: "-", count: detailsWidth)
                             + (needsSpaceSuffix ? " " : "")
                     }
+                } else if let node = node as? BinaryTreeNode<Int> {
+                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
                 } else if let node = node as? BTreeNode<Int, Any> {
                     treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
                 } else if let node = node as? RedBlackTreeNode<Int, Any> {
@@ -76,7 +82,9 @@ internal func traverse_(_ tree: Tree) -> String {
                     treeUnicodeArt += "TODO"
                 }
             } else {
-                if let node = node as? BTreeNode<Int, Any> {
+                if let node = node as? BinaryTreeNode<Int> {
+                    treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
+                } else if let node = node as? BTreeNode<Int, Any> {
                     treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
                 } else if let node = node as? RedBlackTreeNode<Int, Any> {
                     treeUnicodeArt += details(node: node, appendSpace: needsSpaceSuffix, detailsWidth: detailsWidth)
@@ -93,6 +101,11 @@ internal func traverse_(_ tree: Tree) -> String {
     return treeUnicodeArt
 }
 
+func details(node: BinaryTreeNode<Int>, appendSpace: Bool, detailsWidth: Int) -> String {
+    let valueFormatted = node.value == nil ? String(repeating: "-", count: detailsWidth) : String(format: "%03d", node.value!)
+    return valueFormatted + (appendSpace ? " " : "")
+}
+
 func details(node: BTreeNode<Int, Any>, appendSpace: Bool, detailsWidth: Int) -> String {
     let fullNode: [Int] = node.keys + Array(repeating: Int.min, count: Int(node.tree!.m - 1) - node.keys.count)
     let keysInNode = fullNode.map {"\($0 == Int.min ? String(repeating: "-", count: detailsWidth) : String(format: "%03d", $0))" }.joined(separator: "•")
@@ -102,18 +115,4 @@ func details(node: BTreeNode<Int, Any>, appendSpace: Bool, detailsWidth: Int) ->
 func details(node: RedBlackTreeNode<Int, Any>, appendSpace: Bool, detailsWidth: Int) -> String {
     let color = node.red ? "◻︎" : "◼︎"
     return "\(String(format: "%02d", node.key))\(color)" + (appendSpace ? " " : "")
-}
-
-public func checkTreeIntegrity<Key, Value>(_ tree: AnyTree<Key, Value>) -> Bool {
-    switch tree {
-    case .generalTree(let tree):
-        if tree.isEmpty() { return true }
-    case .mAryTree(let tree):
-        if tree.isEmpty() { return true }
-    case .binaryTree(let tree):
-        if tree.isEmpty() { return true }
-    case .redBlackTree(let tree):
-        if tree.isEmpty() { return true }
-    }
-    return false
 }

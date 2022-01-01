@@ -15,7 +15,20 @@ final class BinaryTreeTests: XCTestCase {
         .insert(node: try! BinaryTreeNode(value: "n0")
                     .append(BinaryTreeNode(value: "n1"))
                     .append(BinaryTreeNode(value: "n2")))
-    
+
+    static func validateIterator(tree: BinaryTree<Int>) {
+        var iterativeCount = 0
+        for node in tree {
+            iterativeCount += 1
+            XCTAssertTrue(node.value != nil, "Node value is nil.")
+            XCTAssertTrue(tree.contains { aNode in aNode.value == node.value },
+                          "Tree does not contain a node with value \(node.value!).")
+        }
+        XCTAssertEqual(tree.count(),
+                       iterativeCount,
+                       "Iterator count: \(iterativeCount). Expected: \(tree.count()).")
+    }
+
     func testEmptyTreeIsEmpty() {
         let emptyTree = BinaryTree<Any>()
         XCTAssert(emptyTree.isEmpty(), "Tree is not empty.")
@@ -32,7 +45,11 @@ final class BinaryTreeTests: XCTestCase {
         let depth = emptyTree.depth()
         XCTAssert(depth == 0, "Depth is \(depth). Expected: 0")
     }
-    
+
+    func testFullTreeThreeLevelsDepthIterator() {
+        BinaryTreeTests.validateIterator(tree: BinaryTreeTests.treeFullThreeLevels)
+    }
+
     func testFullTreeThreeLevelsDepth() {
         let depth = BinaryTreeTests.treeFullThreeLevels.depth()
         XCTAssert(depth == 3, "Depth is \(depth). Expected: 3")
@@ -66,7 +83,7 @@ final class BinaryTreeTests: XCTestCase {
             }
         }
     }
-    
+
     func testTreeTwoLevelsDepth() {
         let depth = BinaryTreeTests.treeTwoLevels.depth()
         XCTAssert(depth == 2, "Depth is \(depth). Expected: 2")

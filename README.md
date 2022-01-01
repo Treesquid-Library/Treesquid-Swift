@@ -14,7 +14,6 @@ Tree data structures and algorithms for Swift.
   - generic tree
   - m-ary tree
   - binary tree
-  - trie (a.k.a. prefix tree; work in progress)
 - balanced tree
   - red-black tree
   - B-tree
@@ -25,9 +24,14 @@ Tree data structures and algorithms for Swift.
 - tree balancing
 - key search
   - O(log n) for balanced trees
+  
+### Planned Features
+
+- trie implementation (a.k.a. prefix tree)
+- key search
   - O(m), m being the length of the search sequence, for tries
-- grafting (work in progress)
-- pruning (work in progress)
+- grafting
+- pruning
 
 ## Motivation
 
