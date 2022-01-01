@@ -37,13 +37,15 @@ final class RedBlackTreeTests: XCTestCase {
         traverseAndCountBlackNodes(node: node!.children[1], seenBlackNodes: seenBlackNodes, blackNodesOnPaths: &blackNodesOnPaths)
     }
     
-    func hasRedBlackTreeProperties(tree: RedBlackTree<Int, Any>) -> Bool {
-        guard let root = tree.root else { return true }
+    func hasRedBlackTreeProperties(tree: RedBlackTree<Int, Any>) {
+        guard let root = tree.root else { return }
         var blackNodesRootToNilNodes: [Int] = []
         traverseAndCountBlackNodes(node: root, seenBlackNodes: 0, blackNodesOnPaths: &blackNodesRootToNilNodes)
-        if blackNodesRootToNilNodes.count == 0 { return true }
+        if blackNodesRootToNilNodes.count == 0 { return }
         let sample = blackNodesRootToNilNodes.first
-        return blackNodesRootToNilNodes.filter { $0 != sample }.count == 0
+        XCTAssertEqual(blackNodesRootToNilNodes.filter { $0 != sample }.count,
+                       0,
+                       "The number of black nodes from root to nil-nodes varies.")
     }
     
     //
@@ -535,11 +537,11 @@ final class RedBlackTreeTests: XCTestCase {
                 let tree = RedBlackTree<Int, Any>()
                 for key in insert_keys {
                     tree.insert(node: RedBlackTreeNode(key: key))
-                    XCTAssertTrue(hasRedBlackTreeProperties(tree: tree), "Insert results in uneven black-node count on paths.")
+                    hasRedBlackTreeProperties(tree: tree)
                 }
                 for key in delete_keys {
                     tree.delete(key: key)
-                    XCTAssertTrue(hasRedBlackTreeProperties(tree: tree), "Delete results in uneven black-node count on paths.")
+                    hasRedBlackTreeProperties(tree: tree)
                 }
             }
         }

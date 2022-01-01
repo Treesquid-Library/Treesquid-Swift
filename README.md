@@ -17,7 +17,7 @@ Tree data structures and algorithms for Swift.
   - trie (a.k.a. prefix tree; work in progress)
 - balanced tree
   - red-black tree
-  - B-tree (work in progress)
+  - B-tree
   
 ### Algorithms
 
