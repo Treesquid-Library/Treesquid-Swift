@@ -79,6 +79,7 @@ public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
     }
 }
 
+// An m-ary tree representation where nodes have an optional value associated with them.
 public class MAryTree<Value>: MutableTree, GenericTree {
     public typealias Tree = MAryTree<Value>
     public typealias Node = MAryTreeNode<Value>

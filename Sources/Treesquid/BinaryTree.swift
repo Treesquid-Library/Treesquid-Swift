@@ -143,11 +143,13 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
 public struct BinaryTreeIterator<Value>: IteratorProtocol {
     var nodeStack = Array<BinaryTreeNode<Value>>()
 
+    // O(m), where m is the height of the tree.
     init(_ tree: BinaryTree<Value>) {
         guard let root = tree.root else { return }
         findLeftmostNode(node: root)
     }
 
+    // O(m), where m is the height of the tree.
     mutating public func next() -> BinaryTreeNode<Value>? {
         guard let node = nodeStack.popLast() else {
             return nil
@@ -162,6 +164,7 @@ public struct BinaryTreeIterator<Value>: IteratorProtocol {
         return node
     }
 
+    // O(m), where m is the height of the tree.
     mutating private func findLeftmostNode(node: Element) {
         nodeStack.append(node)
 
@@ -173,6 +176,7 @@ public struct BinaryTreeIterator<Value>: IteratorProtocol {
     }
 }
 
+/// A binary-tree representation where nodes can have an optional value associated with them.
 public class BinaryTree<Value>: Tree, GenericTree, Sequence {
     typealias Tree = BinaryTree<Value>
     typealias Node = BinaryTreeNode<Value>

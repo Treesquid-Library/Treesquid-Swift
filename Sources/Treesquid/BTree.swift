@@ -126,6 +126,7 @@ public class BTreeNode<Key: Comparable, Value>: KeyArrayNode, GenericNode {
     }
 }
 
+/// A B-tree representation where nodes have a key and an optional value associated with them.
 public class BTreeNodeSlice<Key: Comparable, Value>: Node {
     public typealias Node = BTreeNodeSlice<Key, Value>
     public typealias Key = Key

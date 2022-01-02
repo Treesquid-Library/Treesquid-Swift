@@ -1,12 +1,8 @@
-<p align="center">
-    <img src="./Sources/Treesquid/Resources/logo-wide-1200-240.png" width="600" />
-</p>
-
-# Treesquid
-
-![build status](https://github.com/Treesquid-Swift/Treesquid/actions/workflows/swift.yml/badge.svg)
+# ``Treesquid``
 
 Tree data structures and algorithms for Swift.
+
+## Overview
 
 ### Data Structures
 
@@ -56,3 +52,8 @@ The following work was used as an inspiration for Treesquid:
 - [Swift Algorithm Club: Swift Tree Data Structure](https://www.raywenderlich.com/1053-swift-algorithm-club-swift-tree-data-structure) by Kelvin Lau. (Accessed: September 4th, 2021)
 - [Trees in Hacking with Swift](https://www.hackingwithswift.com/plus/data-structures/trees) by Paul Hudson. (Accessed: September 4th, 2021)
 
+## Topics
+
+### Essentials
+
+- ``BinaryTree``

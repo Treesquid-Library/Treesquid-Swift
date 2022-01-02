@@ -140,6 +140,7 @@ public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode, GenericNode {
     }
 }
 
+/// A red-black tree representation where nodes have a key and an optional value associated with them.
 public class RedBlackTree<Key: Comparable, Value>: Tree, GenericTree {
     typealias Tree = RedBlackTree<Key, Value>
     typealias Node = RedBlackTreeNode<Key, Value>
