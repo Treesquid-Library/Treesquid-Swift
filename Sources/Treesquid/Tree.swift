@@ -95,7 +95,7 @@ public protocol MutableNode {
     
     // O(1) for get
     // O(n) for set, where n is the degree of the node, but might be O(1)
-    //      is no space reallocation is necessary.
+    //      if no space reallocation is necessary.
     subscript(index: Int) -> Node? { get set }
     
     @discardableResult
