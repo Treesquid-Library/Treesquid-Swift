@@ -120,7 +120,7 @@ public class MAryTree<Value>: Tree, GenericTree {
     //
     
     @discardableResult
-    public func insert(node: Node) -> Tree {
+    func insert(node: Node) -> Tree {
         node.tree = self
         return Treesquid.insert(within: self, newNode: node, maxDegree: m) as! Tree
     }
