@@ -1,6 +1,6 @@
 import Foundation
 
-public class BinaryTreeNode<Value>: MutableNode, GenericNode {
+public class BinaryTreeNode<Value> {
     public typealias Node = BinaryTreeNode<Value>
     public typealias Value = Value
     
@@ -15,27 +15,13 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
     init(value: Value?) {
         self.value = value
     }
-    
-    //
-    // Node properties
-    //
-    
-    public func degree() -> Int {
-        Treesquid.degree(of: self)
-    }
-    
-    public func capacity() -> Int {
-        Treesquid.capacity(of: self)
-    }
-    
-    public func maxDegree() -> Int {
-        return 2
-    }
-    
+}
+
+extension BinaryTreeNode: MutableNode {
     //
     // Child access
     //
-    
+
     // O(1)
     public subscript(index: Int) -> Node? {
         get {
@@ -45,7 +31,7 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
             children[index] = newChild
         }
     }
-    
+
     // O(1)
     subscript(child: Child) -> Node? {
         get {
@@ -56,7 +42,7 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
             children[child.rawValue] = newChild
         }
     }
-    
+
     // O(1)
     @discardableResult
     public func append(_ child: Node) throws -> Node {
@@ -69,7 +55,7 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
         }
         throw NodeOperationError.childCapacityExceeded
     }
-    
+
     // O(1)
     @discardableResult
     public func prepend(_ child: Node) throws -> Node {
@@ -84,7 +70,7 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
         }
         throw NodeOperationError.childCapacityExceeded
     }
-    
+
     // O(1)
     @discardableResult
     public func insert(_ child: Node, at index: Int) throws -> Node {
@@ -101,38 +87,56 @@ public class BinaryTreeNode<Value>: MutableNode, GenericNode {
         }
         throw NodeOperationError.childCapacityExceeded
     }
-    
+
     // O(1)
     @discardableResult
     public func remove(at index: Int) -> Node {
         children[index] = nil
         return self
     }
-    
+
     // O(1)
     @discardableResult
     public func replace(childAt: Int, with node: Node) -> Node {
         children[childAt] = node
         return self
     }
-    
+}
+
+extension BinaryTreeNode: GenericNode {
+    //
+    // Node properties
+    //
+
+    public func degree() -> Int {
+        Treesquid.degree(of: self)
+    }
+
+    public func capacity() -> Int {
+        Treesquid.capacity(of: self)
+    }
+
+    public func maxDegree() -> Int {
+        return 2
+    }
+
     //
     // GenericNode functions
     //
-    
+
     func child(at index: Int) -> GenericNode? {
         return children[index]
     }
-    
+
     func getChildren() -> [GenericNode?] {
         return children
     }
-    
+
     @discardableResult
     func append(child: GenericNode) throws -> Any {
         return try! append(child as! Node)
     }
-    
+
     @discardableResult
     func replace(childAt: Int, with node: GenericNode) -> Any {
         children[childAt] = node as? BinaryTreeNode<Value>
