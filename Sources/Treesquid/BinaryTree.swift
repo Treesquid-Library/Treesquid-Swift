@@ -181,12 +181,14 @@ public struct BinaryTreeIterator<Value>: IteratorProtocol {
 }
 
 /// A binary-tree representation where nodes can have an optional value associated with them.
-public class BinaryTree<Value>: Tree, GenericTree, Sequence {
+public class BinaryTree<Value> {
     typealias Tree = BinaryTree<Value>
     typealias Node = BinaryTreeNode<Value>
 
     var root: Node?
-    
+}
+
+extension BinaryTree: Tree {
     public func isEmpty() -> Bool {
         return root == nil
     }
@@ -202,7 +204,9 @@ public class BinaryTree<Value>: Tree, GenericTree, Sequence {
     public func depth() -> Int {
         return Treesquid.depth(of: self)
     }
+}
 
+extension BinaryTree: Sequence {
     //
     // Iterator support
     //
@@ -210,7 +214,23 @@ public class BinaryTree<Value>: Tree, GenericTree, Sequence {
     public func makeIterator() -> BinaryTreeIterator<Value> {
         return BinaryTreeIterator<Value>(self)
     }
+}
 
+extension BinaryTree: GenericTree {
+    func getRoot() -> GenericNode? {
+        return root
+    }
+
+    func setRoot(_ node: GenericNode) {
+        root = node as? Node
+    }
+
+    func insert(node: GenericNode) -> Any {
+        return Treesquid.insert(within: self, newNode: node, maxDegree: 2)
+    }
+}
+
+extension BinaryTree {
     //
     // Tree access
     //
@@ -222,21 +242,5 @@ public class BinaryTree<Value>: Tree, GenericTree, Sequence {
     
     func levels() -> [[Node]] {
         return Treesquid.levels(of: self) as! [[Node]]
-    }
-    
-    //
-    // GenericTree functions
-    //
-    
-    func getRoot() -> GenericNode? {
-        return root
-    }
-    
-    func setRoot(_ node: GenericNode) {
-        root = node as? Node
-    }
-    
-    func insert(node: GenericNode) -> Any {
-        return Treesquid.insert(within: self, newNode: node, maxDegree: 2)
     }
 }
