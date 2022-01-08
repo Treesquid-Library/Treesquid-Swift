@@ -1,6 +1,6 @@
 import Foundation
 
-public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
+public class MAryTreeNode<Value>: UnboundedTreeNode<Value> {
     public typealias Node = MAryTreeNode<Value>
     public typealias Value = Value
 
@@ -12,7 +12,19 @@ public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
     public init(value: Value?) {
         self.value = value
     }
-    
+
+    override public func maxDegree() -> Int {
+        guard let tree = tree else { return 0 }
+        return Int(tree.m)
+    }
+
+    @discardableResult
+    public override func remove(at index: Int) -> MAryTreeNode<Value> {
+        return super.remove(at: index) as! MAryTreeNode<Value>
+    }
+}
+
+extension MAryTreeNode: MutableNode {
     //
     // Child access
     //
@@ -63,19 +75,9 @@ public class MAryTreeNode<Value>: UnboundedTreeNode<Value>, MutableNode {
     }
     
     @discardableResult
-    public override func remove(at index: Int) -> MAryTreeNode<Value> {
-        return super.remove(at: index) as! MAryTreeNode<Value>
-    }
-    
-    @discardableResult
     public func replace(childAt: Int, with node: MAryTreeNode<Value>) -> MAryTreeNode<Value> {
         node.parent = self
         return super.replace(childAt: childAt, with: node) as! MAryTreeNode<Value>
-    }
-    
-    override public func maxDegree() -> Int {
-        guard let tree = tree else { return 0 }
-        return Int(tree.m)
     }
 }
 

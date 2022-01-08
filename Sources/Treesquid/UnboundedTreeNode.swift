@@ -7,21 +7,13 @@ public class UnboundedTreeNode<Value>: GenericNode {
     private lazy var children: [Node] = []
 
     //
-    // Node properties
+    // GenericNode function that needs to be overridden by sub-classes.
     //
-    
-    public func degree() -> Int {
-        Treesquid.degree(of: self)
-    }
-    
-    public func capacity() -> Int {
-        Treesquid.capacity(of: self)
-    }
-    
+
     public func maxDegree() -> Int {
         return Int.max
     }
-    
+
     //
     // Child access
     //
@@ -69,11 +61,19 @@ public class UnboundedTreeNode<Value>: GenericNode {
         children[childAt] = node
         return self
     }
-    
+
     //
     // GenericNode functions
     //
-    
+
+    public func degree() -> Int {
+        Treesquid.degree(of: self)
+    }
+
+    public func capacity() -> Int {
+        Treesquid.capacity(of: self)
+    }
+
     internal func child(at index: Int) -> GenericNode? {
         return children[index]
     }
