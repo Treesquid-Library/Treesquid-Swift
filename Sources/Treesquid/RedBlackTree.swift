@@ -4,7 +4,7 @@ import Foundation
 //       as left/right, because index-arithmetic is being used.
 //       Using an enumeration would make overshadow that left/right
 //       must be assigned to 0/1.
-public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode, GenericNode {
+public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode {
     public typealias Node = RedBlackTreeNode<Key, Value>
     public typealias Key = Key
     public typealias Value = Value
@@ -60,7 +60,37 @@ public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode, GenericNode {
         self.key = key
         self.value = value
     }
-    
+}
+
+extension RedBlackTreeNode {
+    public subscript(index: Int) -> Node? {
+        get {
+            children[index]
+        }
+        set(newChild) {
+            children[index] = newChild
+        }
+    }
+
+    //
+    // Child access (internal)
+    //
+
+    // O(1)
+    @discardableResult
+    internal func append(_ child: Node) throws -> Node {
+        for childIndex in 0..<children.count {
+            if children[childIndex] == nil {
+                child.parent = self
+                children[childIndex] = child
+                return self
+            }
+        }
+        throw NodeOperationError.childCapacityExceeded
+    }
+}
+
+extension RedBlackTreeNode: GenericNode {
     //
     // Node properties
     //
@@ -75,33 +105,6 @@ public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode, GenericNode {
     
     public func maxDegree() -> Int {
         return 2
-    }
-    
-    public subscript(index: Int) -> Node? {
-        get {
-            children[index]
-        }
-        set(newChild) {
-            children[index] = newChild
-        }
-    }
-    
-    
-    //
-    // Child access (internal)
-    //
-    
-    // O(1)
-    @discardableResult
-    internal func append(_ child: Node) throws -> Node {
-        for childIndex in 0..<children.count {
-            if children[childIndex] == nil {
-                child.parent = self
-                children[childIndex] = child
-                return self
-            }
-        }
-        throw NodeOperationError.childCapacityExceeded
     }
     
     //
@@ -141,7 +144,7 @@ public class RedBlackTreeNode<Key: Comparable, Value>: KeyNode, GenericNode {
 }
 
 /// A red-black tree representation where nodes have a key and an optional value associated with them.
-public class RedBlackTree<Key: Comparable, Value>: Tree, GenericTree {
+public class RedBlackTree<Key: Comparable, Value> {
     typealias Tree = RedBlackTree<Key, Value>
     typealias Node = RedBlackTreeNode<Key, Value>
 
@@ -160,7 +163,9 @@ public class RedBlackTree<Key: Comparable, Value>: Tree, GenericTree {
     }
     
     var root: Node?
-    
+}
+
+extension RedBlackTree: Tree {
     public func isEmpty() -> Bool {
         return root == nil
     }
@@ -176,7 +181,9 @@ public class RedBlackTree<Key: Comparable, Value>: Tree, GenericTree {
     public func depth() -> Int {
         return Treesquid.depth(of: self)
     }
-    
+}
+
+extension RedBlackTree: GenericTree {
     //
     // Tree access
     //
