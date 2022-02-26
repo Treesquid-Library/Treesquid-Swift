@@ -1,6 +1,6 @@
 import Foundation
 
-public class BTreeNode<Key: Comparable, Value>: KeyArrayNode, GenericNode {
+public class BTreeNode<Key: Comparable, Value>: KeyArrayNode {
     public typealias Node = BTreeNode<Key, Value>
     public typealias Key = Key
     public typealias Value = Value
@@ -42,7 +42,9 @@ public class BTreeNode<Key: Comparable, Value>: KeyArrayNode, GenericNode {
         // Overwrite parent for child nodes.
         self.children.forEach { child in child!.parent = self }
     }
-    
+}
+
+extension BTreeNode: GenericNode {
     //
     // Node properties
     //
@@ -167,7 +169,7 @@ public class BTreeNodeSlice<Key: Comparable, Value>: Node {
     }
 }
 
-public class BTree<Key: Comparable, Value>: Tree, GenericTree {
+public class BTree<Key: Comparable, Value> {
     typealias Tree = BTree<Key, Value>
     typealias Node = BTreeNode<Key, Value>
 
@@ -177,7 +179,9 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     public init(m: Int) {
         self.m = m
     }
-    
+}
+
+extension BTree: Tree {
     public func isEmpty() -> Bool {
         return root == nil
     }
@@ -196,7 +200,13 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
     
     internal var minChildren: Int { get { Int(ceil(Float(m) / 2)) } }
     internal var minKeys: Int { get { Int(ceil(Float(m) / 2)) - 1 } }
-    
+
+    func levels() -> [[Node]] {
+        return Treesquid.levels(of: self) as! [[Node]]
+    }
+}
+
+extension BTree: GenericTree {
     //
     // Tree access
     //
@@ -227,11 +237,7 @@ public class BTree<Key: Comparable, Value>: Tree, GenericTree {
         delete(node: node, at: index)
         return self
     }
-    
-    func levels() -> [[Node]] {
-        return Treesquid.levels(of: self) as! [[Node]]
-    }
-    
+
     //
     // GenericTree functions
     //
