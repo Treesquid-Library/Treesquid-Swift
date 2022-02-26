@@ -210,7 +210,7 @@ extension BTree: GenericTree {
     //
     // Tree access
     //
-    
+
     @discardableResult
     func insert(_ value: Value, forKey: Key) -> Tree {
         guard let root = root else {
@@ -251,7 +251,7 @@ extension BTree: GenericTree {
     }
     
     func insert(node: GenericNode) -> Any {
-        return insert(node: node)
+        fatalError("Not implemented.")
     }
     
     //

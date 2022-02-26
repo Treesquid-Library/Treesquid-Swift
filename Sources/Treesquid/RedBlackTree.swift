@@ -187,7 +187,7 @@ extension RedBlackTree: GenericTree {
     //
     // Tree access
     //
-    
+
     @discardableResult
     func insert(node: Node) -> Tree {
         let (parent, direction) = findForInsert(key: node.key)
@@ -237,7 +237,7 @@ extension RedBlackTree: GenericTree {
     }
     
     func insert(node: GenericNode) -> Any {
-        return insert(node: node)
+        fatalError("Not implemented.")
     }
     
     //
