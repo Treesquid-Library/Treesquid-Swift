@@ -23,8 +23,7 @@ let package = Package(
             dependencies: [],
             exclude: [
                 "Resources/logo-square-240-240.png",
-                "Resources/logo-wide-1200-240.png",
-                "Treesquid.docc"
+                "Resources/logo-wide-1200-240.png"
             ]),
         .testTarget(
             name: "TreesquidTests",
