@@ -24,8 +24,6 @@ Tree data structures and algorithms for Swift.
 ### Planned Features
 
 - trie implementation (a.k.a. prefix tree)
-- key search
-  - O(m), m being the length of the search sequence, for tries
 - grafting
 - pruning
 
