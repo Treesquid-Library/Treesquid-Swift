@@ -3,6 +3,7 @@ import Foundation
 extension Array where Element: Comparable {
     func findIndexByValue(_ value: Element) -> Int? {
         if count == 0 { return nil }
+
         var lowerIndex = 0
         var upperIndex = count
         var middleIndex = lowerIndex + (upperIndex - lowerIndex) / 2
@@ -15,17 +16,21 @@ extension Array where Element: Comparable {
             } else {
                 return middleIndex
             }
+
             middleIndex = lowerIndex + (upperIndex - lowerIndex) / 2
             if middleIndex < 0 || middleIndex >= count {
                 return nil
             }
+            
             valueAtMiddle = self[middleIndex]
         }
+
         return nil
     }
     
     func insertionPoint(value: Element) -> (Bool, Int) {
         if count == 0 { return (false, 0) }
+
         var lowerIndex = 0
         var upperIndex = count
         var middleIndex = lowerIndex + (upperIndex - lowerIndex) / 2
@@ -47,6 +52,7 @@ extension Array where Element: Comparable {
             }
             valueAtMiddle = self[middleIndex]
         }
+        
         // Note: middleIndex + 1 might be array.count (an index beyond the array).
         return (false, valueAtMiddle < value ? middleIndex + 1 : middleIndex)
     }
